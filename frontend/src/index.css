@@ -1,0 +1,79 @@
+@import 'tailwindcss';
+
+@theme inline {
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  --color-info: var(--color-info);
+  --color-dark: var(--color-dark);
+
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-text: var(--color-text);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-border: var(--color-border);
+
+  --gradient-primary: var(--gradient-primary);
+  --gradient-accent: var(--gradient-accent);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+}
+
+:root {
+  /* ---------- LIGHT THEME ---------- */
+
+  /* Brand Palette */
+  --color-primary: #073B4C;
+  --color-secondary: #FFD166;
+  --color-accent: #06D6A0;
+  --color-info: #118AB2;
+  --color-dark: #EF476F;
+
+  /* Base colors */
+  --color-bg: #ffffff;
+  --color-surface: #f8f9fa;
+  --color-text: #1a1a1a;
+  --color-text-secondary: #444;
+  --color-border: rgba(0, 0, 0, 0.1);
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #EF476F, #FFD166);
+  --gradient-accent: linear-gradient(135deg, #06D6A0, #118AB2);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* ---------- DARK THEME ---------- */
+.dark {
+  --color-primary: #f76c8e;
+  --color-secondary: #ffdd82;
+  --color-accent: #28e6b8;
+  --color-info: #2bb2d6;
+  --color-dark: #041e28;
+
+  --color-bg: #0d1b1e;
+  --color-surface: #102a34;
+  --color-text: #f5f5f5;
+  --color-text-secondary: #cfcfcf;
+  --color-border: rgba(255, 255, 255, 0.1);
+
+  --gradient-primary: linear-gradient(135deg, #EF476F, #FFD166);
+  --gradient-accent: linear-gradient(135deg, #06D6A0, #118AB2);
+
+  --shadow-sm: 0 1px 2px rgba(255, 255, 255, 0.05);
+  --shadow-md: 0 4px 6px rgba(255, 255, 255, 0.08);
+  --shadow-lg: 0 10px 15px rgba(255, 255, 255, 0.12);
+}
+
+
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  transition: background-color 0.3s, color 0.3s;
+}
