@@ -74,9 +74,9 @@ const userSchema = new Schema({
     sleepGoal: {
         type: Number,
     },
-    stepsGoal: {
-        type: Number,
-    },
+    // stepsGoal: {
+    //     type: Number,
+    // },
 
     // Fitness and activity goals
     goals: {

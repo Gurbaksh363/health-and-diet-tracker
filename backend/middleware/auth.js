@@ -6,7 +6,6 @@ export const authenticate = async (req, res, next) => {
     try {
         // Get token from header
         const authHeader = req.headers.authorization;
-        
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return next(new ApiError(401, "No token provided", "UNAUTHORIZED"));
         }
@@ -47,7 +46,6 @@ export const authenticate = async (req, res, next) => {
 export const authenticateWithoutVerification = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
-        
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             return next(new ApiError(401, "No token provided", "UNAUTHORIZED"));
         }

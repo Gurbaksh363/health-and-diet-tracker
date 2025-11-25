@@ -6,11 +6,10 @@ import crypto from "crypto";
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "../util/email.js";
 import redisClient from "../../config/redis.js";
 import config from "../../config/index.js";
-import { log } from "console";
 
 const register = async (req, res, next) => {
     try {
-        const { name, email, password, age, height, weight } = req.body;
+        const { name, email, password } = req.body;
 
         if (!name || !email || !password) {
             return next(new ApiError(400, "Name, email, and password are required", "VALIDATION_ERROR", "Must provide name, email, and password"));
@@ -39,9 +38,6 @@ const register = async (req, res, next) => {
             name,
             email,
             password: hashedPassword,
-            age,
-            height,
-            weight,
             isEmailVerified: false,
         });
         await newUser.save();
@@ -246,7 +242,7 @@ const forgotPassword = async (req, res, next) => {
         const resetToken = crypto.randomBytes(32).toString("hex");
 
         // Store token in Redis (expires in 1 hour)
-        await storePasswordResetToken(email, resetToken, 60 * 60);
+        await redisClient.setex(`password_reset:${email}`, 60 * 60, resetToken);
 
         // Send password reset email
         try {
@@ -278,7 +274,7 @@ const resetPassword = async (req, res, next) => {
         }
 
         // Get token from Redis
-        const storedToken = await getPasswordResetToken(email);
+        const storedToken = await redisClient.get(`password_reset:${email}`);
 
         if (!storedToken || storedToken !== token) {
             return next(new ApiError(400, "Invalid or expired reset token", "INVALID_TOKEN"));
@@ -299,7 +295,7 @@ const resetPassword = async (req, res, next) => {
         await user.save();
 
         // Delete token from Redis
-        await deletePasswordResetToken(email);
+        await redisClient.del(`password_reset:${email}`);
 
         res.status(200).json({
             success: true,
@@ -309,8 +305,6 @@ const resetPassword = async (req, res, next) => {
         next(new ApiError(500, "Error resetting password", "RESET_ERROR", error.message));
     }
 };
-
-
 
 export {
     register,
