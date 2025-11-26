@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import Navbar from "./components/Navbar"
 import Home from "./pages/Home"
 import Login from "./pages/Login"
@@ -13,9 +14,21 @@ import ReportsPage from "./pages/ReportsPage"
 import GoalsPage from "./pages/GoalsPage"
 import DashboardPage from "./pages/DashboardPage"
 
+// Component to handle scroll reset on route change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-dvh">
         <Routes>
           {/* Routes with Navbar */}
