@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { Target, Lightbulb } from 'lucide-react';
 
 const TargetWeightScreen = ({ onNext, onBack, onSkip, initialValue = {}, currentWeight }) => {
     const [targetWeight, setTargetWeight] = useState(initialValue.value || '');
@@ -22,12 +22,7 @@ const TargetWeightScreen = ({ onNext, onBack, onSkip, initialValue = {}, current
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-primary/5 via-bg to-accent/5 px-4">
-            <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                className="max-w-2xl w-full"
-            >
+            <div className="max-w-2xl w-full animate-slide-in-right">
                 {/* Progress Indicator */}
                 <div className="mb-8">
                     <div className="flex justify-between text-sm text-text-secondary mb-2">
@@ -35,11 +30,7 @@ const TargetWeightScreen = ({ onNext, onBack, onSkip, initialValue = {}, current
                         <span>55% complete</span>
                     </div>
                     <div className="w-full bg-border rounded-full h-2">
-                        <motion.div
-                            initial={{ width: '45%' }}
-                            animate={{ width: '55%' }}
-                            className="bg-primary h-2 rounded-full"
-                        />
+                        <div className="bg-primary h-2 rounded-full transition-all duration-500" style={{ width: '55%' }} />
                     </div>
                 </div>
 
@@ -53,14 +44,9 @@ const TargetWeightScreen = ({ onNext, onBack, onSkip, initialValue = {}, current
                     </div>
 
                     {/* Icon */}
-                    <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.2, type: 'spring' }}
-                        className="text-6xl mb-6 text-center"
-                    >
-                        🎯
-                    </motion.div>
+                    <div className="mb-6 text-center flex justify-center animate-bounce-in">
+                        <Target className="w-16 h-16 text-green-500" strokeWidth={2} />
+                    </div>
 
                     {/* Title */}
                     <h1 className="text-3xl font-bold text-text text-center mb-2">
@@ -84,9 +70,7 @@ const TargetWeightScreen = ({ onNext, onBack, onSkip, initialValue = {}, current
 
                     {/* Input */}
                     <div className="mb-6">
-                        <motion.input
-                            initial={{ scale: 0.9 }}
-                            animate={{ scale: 1 }}
+                        <input
                             type="number"
                             placeholder={`Enter target weight (${unit})`}
                             value={targetWeight}
@@ -123,10 +107,7 @@ const TargetWeightScreen = ({ onNext, onBack, onSkip, initialValue = {}, current
 
                     {/* Weight Difference Display */}
                     {weightDiff !== null && targetWeight && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className={`rounded-xl p-4 mb-6 text-center ${
+                        <div className={`rounded-xl p-4 mb-6 text-center animate-fade-in ${
                                 weightDiff > 0
                                     ? 'bg-red-50 border border-red-200'
                                     : weightDiff < 0
@@ -150,50 +131,45 @@ const TargetWeightScreen = ({ onNext, onBack, onSkip, initialValue = {}, current
                                     <span className="text-blue-600">Maintain Weight</span>
                                 )}
                             </p>
-                        </motion.div>
+                        </div>
                     )}
 
                     {/* Info Box */}
                     <div className="bg-accent/10 border border-accent/30 rounded-lg p-4 mb-6">
-                        <p className="text-sm text-text-secondary">
-                            💡 <strong>Tip:</strong> A healthy rate of weight loss is 0.5-1 kg (1-2 lbs) per week. Set realistic goals for sustainable results.
+                        <p className="text-sm text-text-secondary flex items-start gap-2">
+                            <Lightbulb className="w-5 h-5 shrink-0 text-accent mt-0.5" />
+                            <span><strong>Tip:</strong> A healthy rate of weight loss is 0.5-1 kg (1-2 lbs) per week. Set realistic goals for sustainable results.</span>
                         </p>
                     </div>
 
                     {/* Navigation Buttons */}
                     <div className="flex gap-4">
-                        <motion.button
+                        <button
                             onClick={onBack}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition"
+                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition hover:scale-[1.02] active:scale-[0.98]"
                         >
                             Back
-                        </motion.button>
-                        <motion.button
+                        </button>
+                        <button
                             onClick={onSkip}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition"
+                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition hover:scale-[1.02] active:scale-[0.98]"
                         >
                             Skip
-                        </motion.button>
-                        <motion.button
+                        </button>
+                        <button
                             onClick={handleNext}
                             disabled={!targetWeight}
-                            whileHover={{ scale: targetWeight ? 1.02 : 1 }}
-                            whileTap={{ scale: targetWeight ? 0.98 : 1 }}
                             className={`flex-2 py-3 rounded-lg font-semibold shadow-md transition ${
                                 targetWeight
-                                    ? 'bg-primary text-white hover:shadow-lg hover:bg-primary/90'
+                                    ? 'bg-primary text-white hover:shadow-lg hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]'
                                     : 'bg-border text-text-secondary cursor-not-allowed'
                             }`}
                         >
                             Continue
-                        </motion.button>
+                        </button>
                     </div>
                 </div>
-            </motion.div>
+            </div>
         </div>
     );
 };

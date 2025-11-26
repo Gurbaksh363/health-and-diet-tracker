@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { Cake } from 'lucide-react';
 
 const AgeScreen = ({ onNext, onBack, initialValue = '' }) => {
     const [age, setAge] = useState(initialValue);
@@ -23,12 +23,7 @@ const AgeScreen = ({ onNext, onBack, initialValue = '' }) => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-primary/5 via-bg to-accent/5 px-4">
-            <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                className="max-w-lg w-full"
-            >
+            <div className="max-w-lg w-full animate-slide-in-right">
                 {/* Progress Indicator */}
                 <div className="mb-8">
                     <div className="flex justify-between text-sm text-text-secondary mb-2">
@@ -36,25 +31,16 @@ const AgeScreen = ({ onNext, onBack, initialValue = '' }) => {
                         <span>18% complete</span>
                     </div>
                     <div className="w-full bg-border rounded-full h-2">
-                        <motion.div
-                            initial={{ width: '9%' }}
-                            animate={{ width: '18%' }}
-                            className="bg-primary h-2 rounded-full"
-                        />
+                        <div className="bg-primary h-2 rounded-full transition-all duration-500" style={{ width: '18%' }} />
                     </div>
                 </div>
 
                 {/* Content Card */}
                 <div className="bg-surface rounded-2xl p-8 shadow-lg">
                     {/* Icon */}
-                    <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.2, type: 'spring' }}
-                        className="text-6xl mb-6 text-center"
-                    >
-                        🎂
-                    </motion.div>
+                    <div className="mb-6 text-center flex justify-center animate-bounce-in">
+                        <Cake className="w-16 h-16 text-pink-500" strokeWidth={2} />
+                    </div>
 
                     {/* Title */}
                     <h1 className="text-3xl font-bold text-text text-center mb-2">
@@ -80,13 +66,9 @@ const AgeScreen = ({ onNext, onBack, initialValue = '' }) => {
                             className="w-full px-6 py-4 bg-bg border-2 border-border rounded-xl text-center text-3xl font-semibold text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
                         />
                         {error && (
-                            <motion.p
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="text-red-500 text-sm mt-2 text-center"
-                            >
+                            <p className="text-red-500 text-sm mt-2 text-center animate-fade-in">
                                 {error}
-                            </motion.p>
+                            </p>
                         )}
                     </div>
 
@@ -105,25 +87,21 @@ const AgeScreen = ({ onNext, onBack, initialValue = '' }) => {
 
                     {/* Navigation Buttons */}
                     <div className="flex gap-4">
-                        <motion.button
+                        <button
                             onClick={onBack}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition"
+                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition hover:scale-[1.02] active:scale-[0.98]"
                         >
                             Back
-                        </motion.button>
-                        <motion.button
+                        </button>
+                        <button
                             onClick={handleNext}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="flex-[2] py-3 bg-primary text-white rounded-lg font-semibold shadow-md hover:shadow-lg hover:bg-primary/90 transition"
+                            className="flex-2 py-3 bg-primary text-white rounded-lg font-semibold shadow-md hover:shadow-lg hover:bg-primary/90 transition hover:scale-[1.02] active:scale-[0.98]"
                         >
                             Continue
-                        </motion.button>
+                        </button>
                     </div>
                 </div>
-            </motion.div>
+            </div>
         </div>
     );
 };

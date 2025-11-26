@@ -1,107 +1,74 @@
-import { motion } from 'framer-motion';
+import { Target, BarChart3, Flame, Sparkles, Clock, Rocket } from 'lucide-react';
 
 const WelcomeScreen = ({ onNext }) => {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-primary/5 via-bg to-accent/5 px-4">
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="max-w-2xl text-center"
-            >
-                {/* Icon/Emoji */}
-                <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                    className="text-8xl mb-6"
-                >
-                    🎯
-                </motion.div>
+            <div className="max-w-2xl text-center animate-fade-in">
+                {/* Icon */}
+                <div className="mb-6 flex justify-center animate-scale-in">
+                    <Target className="w-24 h-24 text-primary" strokeWidth={2} />
+                </div>
 
                 {/* Title */}
-                <motion.h1
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-4xl md:text-5xl font-bold text-text mb-4"
-                >
+                <h1 className="text-4xl md:text-5xl font-bold text-text mb-4 animate-fade-in-delay-1">
                     Welcome to Your Health Journey!
-                </motion.h1>
+                </h1>
 
                 {/* Subtitle */}
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-xl text-text-secondary mb-8"
-                >
+                <p className="text-xl text-text-secondary mb-8 animate-fade-in-delay-2">
                     Let's personalize your experience to help you achieve your fitness goals
-                </motion.p>
+                </p>
 
                 {/* Features List */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.5 }}
-                    className="bg-surface rounded-2xl p-8 mb-8 shadow-lg"
-                >
+                <div className="bg-surface rounded-2xl p-8 mb-8 shadow-lg animate-fade-in-delay-3">
                     <h2 className="text-2xl font-semibold text-text mb-6">What we'll do:</h2>
                     <div className="space-y-4 text-left">
                         <div className="flex items-start">
-                            <span className="text-2xl mr-4">📊</span>
+                            <BarChart3 className="w-6 h-6 text-blue-500 mr-4 mt-1" strokeWidth={2} />
                             <div>
                                 <h3 className="font-semibold text-text">Collect Your Info</h3>
                                 <p className="text-text-secondary text-sm">Age, height, weight, and activity level</p>
                             </div>
                         </div>
                         <div className="flex items-start">
-                            <span className="text-2xl mr-4">🎯</span>
+                            <Target className="w-6 h-6 text-green-500 mr-4 mt-1" strokeWidth={2} />
                             <div>
                                 <h3 className="font-semibold text-text">Set Your Goals</h3>
                                 <p className="text-text-secondary text-sm">Define what you want to achieve</p>
                             </div>
                         </div>
                         <div className="flex items-start">
-                            <span className="text-2xl mr-4">🔥</span>
+                            <Flame className="w-6 h-6 text-orange-500 mr-4 mt-1" strokeWidth={2} />
                             <div>
                                 <h3 className="font-semibold text-text">Calculate Your Needs</h3>
                                 <p className="text-text-secondary text-sm">Get personalized calorie and macro targets</p>
                             </div>
                         </div>
                         <div className="flex items-start">
-                            <span className="text-2xl mr-4">✨</span>
+                            <Sparkles className="w-6 h-6 text-purple-500 mr-4 mt-1" strokeWidth={2} />
                             <div>
                                 <h3 className="font-semibold text-text">Create Your Plan</h3>
                                 <p className="text-text-secondary text-sm">Receive a customized health plan</p>
                             </div>
                         </div>
                     </div>
-                </motion.div>
+                </div>
 
                 {/* Time Estimate */}
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6 }}
-                    className="text-text-secondary mb-8"
-                >
-                    ⏱️ Takes about 2 minutes
-                </motion.p>
+                <p className="text-text-secondary mb-8 flex items-center justify-center gap-2 animate-fade-in-delay-4">
+                    <Clock className="w-5 h-5" />
+                    Takes about 2 minutes
+                </p>
 
                 {/* CTA Button */}
-                <motion.button
+                <button
                     onClick={onNext}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.7 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="px-12 py-4 bg-primary text-white rounded-full font-semibold text-lg shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all"
+                    className="px-12 py-4 bg-primary text-white rounded-full font-semibold text-lg shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all hover:scale-105 active:scale-95 animate-fade-in-delay-5 inline-flex items-center gap-2"
                 >
-                    Let's Get Started! 🚀
-                </motion.button>
-            </motion.div>
+                    Let's Get Started!
+                    <Rocket className="w-5 h-5" />
+                </button>
+            </div>
         </div>
     );
 };

@@ -1,5 +1,26 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { 
+    Utensils, 
+    Leaf, 
+    Fish, 
+    Egg, 
+    ShieldBan, 
+    Star, 
+    Drumstick,
+    Salad,
+    Check,
+    Milk,
+    Wheat,
+    Shell,
+    Nut,
+    Flame,
+    Cherry,
+    Apple,
+    Lightbulb,
+    Sprout,
+    Soup
+} from 'lucide-react';
 
 const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) => {
     const [dietType, setDietType] = useState(initialValue.dietType || '');
@@ -7,35 +28,35 @@ const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) =>
     const [dislikes, setDislikes] = useState(initialValue.dislikes || []);
 
     const dietTypes = [
-        { value: 'vegetarian', label: 'Vegetarian', emoji: '🥗', description: 'No meat or fish' },
-        { value: 'vegan', label: 'Vegan', emoji: '🌱', description: 'No animal products' },
-        { value: 'pescatarian', label: 'Pescatarian', emoji: '🐟', description: 'Fish but no meat' },
-        { value: 'keto', label: 'Keto', emoji: '🥑', description: 'Low carb, high fat' },
-        { value: 'gluten-free', label: 'Gluten-Free', emoji: '🚫�', description: 'No gluten' },
-        { value: 'kosher', label: 'Kosher', emoji: '✡️', description: 'Jewish dietary laws' },
-        { value: 'non-vegetarian', label: 'Non-Vegetarian', emoji: '�', description: 'Eat everything' },
+        { value: 'vegetarian', label: 'Vegetarian', icon: Salad, color: 'text-green-600', description: 'No meat or fish' },
+        { value: 'vegan', label: 'Vegan', icon: Leaf, color: 'text-green-500', description: 'No animal products' },
+        { value: 'pescatarian', label: 'Pescatarian', icon: Fish, color: 'text-blue-500', description: 'Fish but no meat' },
+        { value: 'keto', label: 'Keto', icon: Egg, color: 'text-yellow-600', description: 'Low carb, high fat' },
+        { value: 'gluten-free', label: 'Gluten-Free', icon: ShieldBan, color: 'text-amber-600', description: 'No gluten' },
+        { value: 'kosher', label: 'Kosher', icon: Star, color: 'text-blue-600', description: 'Jewish dietary laws' },
+        { value: 'non-vegetarian', label: 'Non-Vegetarian', icon: Drumstick, color: 'text-red-600', description: 'Eat everything' },
     ];
 
     const commonAllergies = [
-        { value: 'peanuts', label: 'Peanuts', emoji: '🥜' },
-        { value: 'tree_nuts', label: 'Tree Nuts', emoji: '🌰' },
-        { value: 'dairy', label: 'Dairy', emoji: '🥛' },
-        { value: 'eggs', label: 'Eggs', emoji: '🥚' },
-        { value: 'soy', label: 'Soy', emoji: '🫘' },
-        { value: 'wheat', label: 'Wheat', emoji: '🌾' },
-        { value: 'fish', label: 'Fish', emoji: '🐟' },
-        { value: 'shellfish', label: 'Shellfish', emoji: '�' },
+        { value: 'peanuts', label: 'Peanuts', icon: Nut, color: 'text-amber-700' },
+        { value: 'tree_nuts', label: 'Tree Nuts', icon: Nut, color: 'text-amber-600' },
+        { value: 'dairy', label: 'Dairy', icon: Milk, color: 'text-blue-400' },
+        { value: 'eggs', label: 'Eggs', icon: Egg, color: 'text-yellow-500' },
+        { value: 'soy', label: 'Soy', icon: Leaf, color: 'text-green-700' },
+        { value: 'wheat', label: 'Wheat', icon: Wheat, color: 'text-yellow-700' },
+        { value: 'fish', label: 'Fish', icon: Fish, color: 'text-blue-500' },
+        { value: 'shellfish', label: 'Shellfish', icon: Shell, color: 'text-orange-500' },
     ];
 
     const commonDislikes = [
-        { value: 'mushrooms', label: 'Mushrooms', emoji: '�' },
-        { value: 'olives', label: 'Olives', emoji: '🫒' },
-        { value: 'onions', label: 'Onions', emoji: '🧅' },
-        { value: 'garlic', label: 'Garlic', emoji: '🧄' },
-        { value: 'cilantro', label: 'Cilantro', emoji: '🌿' },
-        { value: 'seafood', label: 'Seafood', emoji: '🦞' },
-        { value: 'spicy', label: 'Spicy Food', emoji: '🌶️' },
-        { value: 'beans', label: 'Beans', emoji: '🫘' },
+        { value: 'mushrooms', label: 'Mushrooms', icon: Soup, color: 'text-amber-800' },
+        { value: 'olives', label: 'Olives', icon: Cherry, color: 'text-green-700' },
+        { value: 'onions', label: 'Onions', icon: Apple, color: 'text-purple-600' },
+        { value: 'garlic', label: 'Garlic', icon: Sprout, color: 'text-purple-500' },
+        { value: 'cilantro', label: 'Cilantro', icon: Leaf, color: 'text-green-600' },
+        { value: 'seafood', label: 'Seafood', icon: Shell, color: 'text-orange-600' },
+        { value: 'spicy', label: 'Spicy Food', icon: Flame, color: 'text-red-500' },
+        { value: 'beans', label: 'Beans', icon: Salad, color: 'text-green-700' },
     ];
 
     const toggleAllergy = (value) => {
@@ -101,9 +122,9 @@ const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) =>
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 0.2, type: 'spring' }}
-                        className="text-6xl mb-6 text-center"
+                        className="flex justify-center mb-6"
                     >
-                        🍴
+                        <Utensils className="w-16 h-16 text-primary" />
                     </motion.div>
 
                     {/* Title */}
@@ -120,39 +141,44 @@ const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) =>
                     <div className="mb-8">
                         <h3 className="text-lg font-semibold text-text mb-3">Diet Type</h3>
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                            {dietTypes.map((diet, index) => (
-                                <motion.button
-                                    key={diet.value}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: index * 0.05 }}
-                                    onClick={() => setDietType(diet.value)}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    className={`relative p-4 rounded-xl border-2 transition-all ${
-                                        dietType === diet.value
-                                            ? 'border-primary bg-primary/10 shadow-md'
-                                            : 'border-border bg-bg hover:border-primary/50'
-                                    }`}
-                                >
-                                    <div className="text-3xl mb-2">{diet.emoji}</div>
-                                    <p className="text-sm font-semibold text-text mb-1">
-                                        {diet.label}
-                                    </p>
-                                    <p className="text-xs text-text-secondary">
-                                        {diet.description}
-                                    </p>
-                                    {dietType === diet.value && (
-                                        <motion.div
-                                            initial={{ scale: 0 }}
-                                            animate={{ scale: 1 }}
-                                            className="absolute top-2 right-2 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                                        >
-                                            ✓
-                                        </motion.div>
-                                    )}
-                                </motion.button>
-                            ))}
+                            {dietTypes.map((diet, index) => {
+                                const IconComponent = diet.icon;
+                                return (
+                                    <motion.button
+                                        key={diet.value}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: index * 0.05 }}
+                                        onClick={() => setDietType(diet.value)}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className={`relative p-4 rounded-xl border-2 transition-all ${
+                                            dietType === diet.value
+                                                ? 'border-primary bg-primary/10 shadow-md'
+                                                : 'border-border bg-bg hover:border-primary/50'
+                                        }`}
+                                    >
+                                        <div className="flex justify-center mb-2">
+                                            <IconComponent className={`w-8 h-8 ${diet.color}`} />
+                                        </div>
+                                        <p className="text-sm font-semibold text-text mb-1">
+                                            {diet.label}
+                                        </p>
+                                        <p className="text-xs text-text-secondary">
+                                            {diet.description}
+                                        </p>
+                                        {dietType === diet.value && (
+                                            <motion.div
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                className="absolute top-2 right-2 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center"
+                                            >
+                                                <Check className="w-4 h-4" />
+                                            </motion.div>
+                                        )}
+                                    </motion.button>
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -160,36 +186,41 @@ const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) =>
                     <div className="mb-8">
                         <h3 className="text-lg font-semibold text-text mb-3">Food Allergies</h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {commonAllergies.map((allergy, index) => (
-                                <motion.button
-                                    key={allergy.value}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: 0.3 + index * 0.05 }}
-                                    onClick={() => toggleAllergy(allergy.value)}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    className={`relative p-3 rounded-xl border-2 transition-all ${
-                                        allergies.includes(allergy.value)
-                                            ? 'border-red-500 bg-red-50 shadow-md'
-                                            : 'border-border bg-bg hover:border-red-300'
-                                    }`}
-                                >
-                                    <div className="text-2xl mb-1">{allergy.emoji}</div>
-                                    <p className="text-xs font-semibold text-text">
-                                        {allergy.label}
-                                    </p>
-                                    {allergies.includes(allergy.value) && (
-                                        <motion.div
-                                            initial={{ scale: 0 }}
-                                            animate={{ scale: 1 }}
-                                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                                        >
-                                            ✓
-                                        </motion.div>
-                                    )}
-                                </motion.button>
-                            ))}
+                            {commonAllergies.map((allergy, index) => {
+                                const IconComponent = allergy.icon;
+                                return (
+                                    <motion.button
+                                        key={allergy.value}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: 0.3 + index * 0.05 }}
+                                        onClick={() => toggleAllergy(allergy.value)}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className={`relative p-3 rounded-xl border-2 transition-all ${
+                                            allergies.includes(allergy.value)
+                                                ? 'border-red-500 bg-red-50 shadow-md'
+                                                : 'border-border bg-bg hover:border-red-300'
+                                        }`}
+                                    >
+                                        <div className="flex justify-center mb-1">
+                                            <IconComponent className={`w-6 h-6 ${allergy.color}`} />
+                                        </div>
+                                        <p className="text-xs font-semibold text-text">
+                                            {allergy.label}
+                                        </p>
+                                        {allergies.includes(allergy.value) && (
+                                            <motion.div
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center"
+                                            >
+                                                <Check className="w-3 h-3" />
+                                            </motion.div>
+                                        )}
+                                    </motion.button>
+                                );
+                            })}
                         </div>
                     </div>
 
@@ -197,43 +228,49 @@ const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) =>
                     <div className="mb-6">
                         <h3 className="text-lg font-semibold text-text mb-3">Foods You Dislike</h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {commonDislikes.map((dislike, index) => (
-                                <motion.button
-                                    key={dislike.value}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ delay: 0.5 + index * 0.05 }}
-                                    onClick={() => toggleDislike(dislike.value)}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    className={`relative p-3 rounded-xl border-2 transition-all ${
-                                        dislikes.includes(dislike.value)
-                                            ? 'border-secondary bg-secondary/10 shadow-md'
-                                            : 'border-border bg-bg hover:border-secondary/50'
-                                    }`}
-                                >
-                                    <div className="text-2xl mb-1">{dislike.emoji}</div>
-                                    <p className="text-xs font-semibold text-text">
-                                        {dislike.label}
-                                    </p>
-                                    {dislikes.includes(dislike.value) && (
-                                        <motion.div
-                                            initial={{ scale: 0 }}
-                                            animate={{ scale: 1 }}
-                                            className="absolute top-2 right-2 bg-secondary text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
-                                        >
-                                            ✓
-                                        </motion.div>
-                                    )}
-                                </motion.button>
-                            ))}
+                            {commonDislikes.map((dislike, index) => {
+                                const IconComponent = dislike.icon;
+                                return (
+                                    <motion.button
+                                        key={dislike.value}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: 0.5 + index * 0.05 }}
+                                        onClick={() => toggleDislike(dislike.value)}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className={`relative p-3 rounded-xl border-2 transition-all ${
+                                            dislikes.includes(dislike.value)
+                                                ? 'border-secondary bg-secondary/10 shadow-md'
+                                                : 'border-border bg-bg hover:border-secondary/50'
+                                        }`}
+                                    >
+                                        <div className="flex justify-center mb-1">
+                                            <IconComponent className={`w-6 h-6 ${dislike.color}`} />
+                                        </div>
+                                        <p className="text-xs font-semibold text-text">
+                                            {dislike.label}
+                                        </p>
+                                        {dislikes.includes(dislike.value) && (
+                                            <motion.div
+                                                initial={{ scale: 0 }}
+                                                animate={{ scale: 1 }}
+                                                className="absolute top-2 right-2 bg-secondary text-white rounded-full w-5 h-5 flex items-center justify-center"
+                                            >
+                                                <Check className="w-3 h-3" />
+                                            </motion.div>
+                                        )}
+                                    </motion.button>
+                                );
+                            })}
                         </div>
                     </div>
 
                     {/* Info Box */}
                     <div className="bg-accent/10 border border-accent/30 rounded-lg p-4 mb-6">
-                        <p className="text-sm text-text-secondary">
-                            💡 <strong>Tip:</strong> Select one diet type and any allergies or dislikes. We'll suggest meals that match your preferences.
+                        <p className="text-sm text-text-secondary flex items-start gap-2">
+                            <Lightbulb className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+                            <span><strong>Tip:</strong> Select one diet type and any allergies or dislikes. We'll suggest meals that match your preferences.</span>
                         </p>
                     </div>
 

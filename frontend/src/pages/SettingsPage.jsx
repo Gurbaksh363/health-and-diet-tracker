@@ -1,6 +1,19 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import {
+  ChevronLeft,
+  Settings,
+  Ruler,
+  Palette,
+  Bell,
+  Database,
+  AlertTriangle,
+  Sun,
+  Moon,
+  BarChart3,
+  Trash2,
+  Save
+} from 'lucide-react';
 
 export default function SettingsPage() {
   const navigate = useNavigate();
@@ -45,23 +58,27 @@ export default function SettingsPage() {
             onClick={() => navigate('/')}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
+            <ChevronLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-2xl font-bold text-gray-900">⚙️ Settings</h1>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-500/10 to-gray-500/5 flex items-center justify-center">
+              <Settings className="w-5 h-5 text-gray-700" />
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+          </div>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
         
         {/* Units Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
-        >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">📏 Units</h2>
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 flex items-center justify-center">
+              <Ruler className="w-5 h-5 text-blue-500" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900">Units</h2>
+          </div>
           
           <div className="space-y-4">
             {/* Calories */}
@@ -72,10 +89,10 @@ export default function SettingsPage() {
                   <button
                     key={unit}
                     onClick={() => setUnits({ ...units, calories: unit })}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                       units.calories === unit
-                        ? 'bg-[#06D6A0] text-white shadow-sm'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        ? 'bg-[#06D6A0] text-white shadow-sm scale-105'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105'
                     }`}
                   >
                     {unit}
@@ -92,10 +109,10 @@ export default function SettingsPage() {
                   <button
                     key={unit}
                     onClick={() => setUnits({ ...units, weight: unit })}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                       units.weight === unit
-                        ? 'bg-[#06D6A0] text-white shadow-sm'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        ? 'bg-[#06D6A0] text-white shadow-sm scale-105'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105'
                     }`}
                   >
                     {unit}
@@ -112,10 +129,10 @@ export default function SettingsPage() {
                   <button
                     key={unit}
                     onClick={() => setUnits({ ...units, distance: unit })}
-                    className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                    className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                       units.distance === unit
-                        ? 'bg-[#06D6A0] text-white shadow-sm'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        ? 'bg-[#06D6A0] text-white shadow-sm scale-105'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:scale-105'
                     }`}
                   >
                     {unit}
@@ -124,16 +141,16 @@ export default function SettingsPage() {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Theme Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
-        >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">🎨 Appearance</h2>
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in delay-100">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 flex items-center justify-center">
+              <Palette className="w-5 h-5 text-purple-500" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900">Appearance</h2>
+          </div>
           
           <div className="flex items-center justify-between">
             <div>
@@ -146,25 +163,29 @@ export default function SettingsPage() {
                 theme === 'dark' ? 'bg-[#073B4C]' : 'bg-gray-300'
               }`}
             >
-              <motion.div
-                className="absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow-md flex items-center justify-center"
-                animate={{ x: theme === 'dark' ? 28 : 0 }}
-                transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              <div
+                className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow-md flex items-center justify-center transition-transform duration-300 ease-out ${
+                  theme === 'dark' ? 'translate-x-7' : 'translate-x-0'
+                }`}
               >
-                {theme === 'dark' ? '🌙' : '☀️'}
-              </motion.div>
+                {theme === 'dark' ? (
+                  <Moon className="w-3 h-3 text-[#073B4C]" />
+                ) : (
+                  <Sun className="w-3 h-3 text-yellow-500" />
+                )}
+              </div>
             </button>
           </div>
-        </motion.div>
+        </div>
 
         {/* Notifications Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
-        >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">🔔 Notifications</h2>
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in delay-200">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500/10 to-green-500/5 flex items-center justify-center">
+              <Bell className="w-5 h-5 text-green-500" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900">Notifications</h2>
+          </div>
           
           <div className="space-y-4">
             {Object.entries(notifications).map(([key, value]) => (
@@ -189,25 +210,25 @@ export default function SettingsPage() {
                     value ? 'bg-[#06D6A0]' : 'bg-gray-300'
                   }`}
                 >
-                  <motion.div
-                    className="absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow-md"
-                    animate={{ x: value ? 28 : 0 }}
-                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                  <div
+                    className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ease-out ${
+                      value ? 'translate-x-7' : 'translate-x-0'
+                    }`}
                   />
                 </button>
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Data Export Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
-        >
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">💾 Data Export</h2>
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in delay-300">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/10 to-indigo-500/5 flex items-center justify-center">
+              <Database className="w-5 h-5 text-indigo-500" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900">Data Export</h2>
+          </div>
           
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -221,31 +242,32 @@ export default function SettingsPage() {
                   autoExport ? 'bg-[#06D6A0]' : 'bg-gray-300'
                 }`}
               >
-                <motion.div
-                  className="absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow-md"
-                  animate={{ x: autoExport ? 28 : 0 }}
-                  transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                <div
+                  className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ease-out ${
+                    autoExport ? 'translate-x-7' : 'translate-x-0'
+                  }`}
                 />
               </button>
             </div>
 
             <button
               onClick={() => navigate('/reports')}
-              className="w-full py-3 bg-[#073B4C] text-white rounded-lg font-medium hover:bg-[#0a4d61] transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-[#073B4C] text-white rounded-lg font-medium hover:bg-[#0a4d61] transition-colors"
             >
-              📊 View Reports & Export Data
+              <BarChart3 className="w-5 h-5" />
+              View Reports & Export Data
             </button>
           </div>
-        </motion.div>
+        </div>
 
         {/* Danger Zone */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-red-50 rounded-xl p-6 border border-red-200"
-        >
-          <h2 className="text-lg font-semibold text-red-900 mb-4">⚠️ Danger Zone</h2>
+        <div className="bg-red-50 rounded-xl p-6 border border-red-200 animate-fade-in delay-400">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500/10 to-red-500/5 flex items-center justify-center">
+              <AlertTriangle className="w-5 h-5 text-red-500" />
+            </div>
+            <h2 className="text-lg font-semibold text-red-900">Danger Zone</h2>
+          </div>
           
           <div className="space-y-3">
             <p className="text-sm text-red-700">
@@ -253,29 +275,33 @@ export default function SettingsPage() {
             </p>
             <button
               onClick={() => setShowDeleteModal(true)}
-              className="w-full py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 active:scale-95 transition-all"
             >
+              <Trash2 className="w-5 h-5" />
               Delete Account & All Data
             </button>
           </div>
-        </motion.div>
+        </div>
 
       </div>
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl p-6 max-w-md w-full"
-          >
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Delete Account?</h3>
-            <p className="text-gray-600 mb-6">
-              This action cannot be undone. All your nutrition data, workout logs, and personal information will be permanently deleted.
-            </p>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4 animate-fade-in">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full animate-scale-in">
+            <div className="flex items-start gap-3 mb-4">
+              <div className="w-12 h-12 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Delete Account?</h3>
+                <p className="text-gray-600">
+                  This action cannot be undone. All your nutrition data, workout logs, and personal information will be permanently deleted.
+                </p>
+              </div>
+            </div>
             
-            <div className="flex gap-3">
+            <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setShowDeleteModal(false)}
                 className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors"
@@ -284,12 +310,13 @@ export default function SettingsPage() {
               </button>
               <button
                 onClick={handleDeleteAccount}
-                className="flex-1 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+                className="flex items-center justify-center gap-2 flex-1 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 active:scale-95 transition-all"
               >
+                <Trash2 className="w-4 h-4" />
                 Delete Forever
               </button>
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
     </div>

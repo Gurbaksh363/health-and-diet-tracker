@@ -1,20 +1,20 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { Hospital, Syringe, Heart, HeartPulse, Flower2, Wind, Bone, TrendingUp, Ban, Stethoscope, Check, Lock, Lightbulb } from 'lucide-react';
 
 const MedicalConditionsScreen = ({ onNext, onBack, onSkip, initialValue = [] }) => {
     const [selectedConditions, setSelectedConditions] = useState(initialValue);
 
     const conditions = [
-        { value: 'diabetes', label: 'Diabetes', emoji: '💉' },
-        { value: 'hypertension', label: 'High Blood Pressure', emoji: '❤️' },
-        { value: 'heart_disease', label: 'Heart Disease', emoji: '🫀' },
-        { value: 'thyroid', label: 'Thyroid Issues', emoji: '🦋' },
-        { value: 'pcos', label: 'PCOS', emoji: '🌸' },
-        { value: 'asthma', label: 'Asthma', emoji: '🫁' },
-        { value: 'arthritis', label: 'Arthritis', emoji: '🦴' },
-        { value: 'cholesterol', label: 'High Cholesterol', emoji: '📊' },
-        { value: 'food_allergies', label: 'Food Allergies', emoji: '🚫' },
-        { value: 'other', label: 'Other Condition', emoji: '⚕️' },
+        { value: 'diabetes', label: 'Diabetes', icon: Syringe, color: 'text-blue-500' },
+        { value: 'hypertension', label: 'High Blood Pressure', icon: Heart, color: 'text-red-500' },
+        { value: 'heart_disease', label: 'Heart Disease', icon: HeartPulse, color: 'text-rose-500' },
+        { value: 'thyroid', label: 'Thyroid Issues', icon: Flower2, color: 'text-purple-500' },
+        { value: 'pcos', label: 'PCOS', icon: Flower2, color: 'text-pink-500' },
+        { value: 'asthma', label: 'Asthma', icon: Wind, color: 'text-cyan-500' },
+        { value: 'arthritis', label: 'Arthritis', icon: Bone, color: 'text-amber-500' },
+        { value: 'cholesterol', label: 'High Cholesterol', icon: TrendingUp, color: 'text-orange-500' },
+        { value: 'food_allergies', label: 'Food Allergies', icon: Ban, color: 'text-yellow-500' },
+        { value: 'other', label: 'Other Condition', icon: Stethoscope, color: 'text-gray-500' },
     ];
 
     const toggleCondition = (value) => {
@@ -31,12 +31,7 @@ const MedicalConditionsScreen = ({ onNext, onBack, onSkip, initialValue = [] }) 
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-primary/5 via-bg to-accent/5 px-4 py-8">
-            <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                className="max-w-3xl w-full"
-            >
+            <div className="max-w-3xl w-full animate-slide-in-right">
                 {/* Progress Indicator */}
                 <div className="mb-8">
                     <div className="flex justify-between text-sm text-text-secondary mb-2">
@@ -44,11 +39,7 @@ const MedicalConditionsScreen = ({ onNext, onBack, onSkip, initialValue = [] }) 
                         <span>73% complete</span>
                     </div>
                     <div className="w-full bg-border rounded-full h-2">
-                        <motion.div
-                            initial={{ width: '64%' }}
-                            animate={{ width: '73%' }}
-                            className="bg-primary h-2 rounded-full"
-                        />
+                        <div className="bg-primary h-2 rounded-full transition-all duration-500" style={{ width: '73%' }} />
                     </div>
                 </div>
 
@@ -62,14 +53,9 @@ const MedicalConditionsScreen = ({ onNext, onBack, onSkip, initialValue = [] }) 
                     </div>
 
                     {/* Icon */}
-                    <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.2, type: 'spring' }}
-                        className="text-6xl mb-6 text-center"
-                    >
-                        🏥
-                    </motion.div>
+                    <div className="mb-6 text-center flex justify-center animate-bounce-in">
+                        <Hospital className="w-16 h-16 text-red-500" strokeWidth={2} />
+                    </div>
 
                     {/* Title */}
                     <h1 className="text-3xl font-bold text-text text-center mb-2">
@@ -83,85 +69,71 @@ const MedicalConditionsScreen = ({ onNext, onBack, onSkip, initialValue = [] }) 
 
                     {/* Conditions Grid */}
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6 max-h-96 overflow-y-auto">
-                        {conditions.map((condition, index) => (
-                            <motion.button
-                                key={condition.value}
-                                initial={{ opacity: 0, scale: 0.9 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: index * 0.05 }}
-                                onClick={() => toggleCondition(condition.value)}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className={`relative p-4 rounded-xl border-2 transition-all ${
-                                    selectedConditions.includes(condition.value)
-                                        ? 'border-primary bg-primary/10 shadow-md'
-                                        : 'border-border bg-bg hover:border-primary/50'
-                                }`}
-                            >
-                                <div className="text-3xl mb-2">{condition.emoji}</div>
-                                <p className="text-sm font-semibold text-text text-center">
-                                    {condition.label}
-                                </p>
-                                {selectedConditions.includes(condition.value) && (
-                                    <motion.div
-                                        initial={{ scale: 0 }}
-                                        animate={{ scale: 1 }}
-                                        className="absolute top-2 right-2 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                                    >
-                                        ✓
-                                    </motion.div>
-                                )}
-                            </motion.button>
-                        ))}
+                        {conditions.map((condition, index) => {
+                            const Icon = condition.icon;
+                            return (
+                                <button
+                                    key={condition.value}
+                                    onClick={() => toggleCondition(condition.value)}
+                                    className={`relative p-4 rounded-xl border-2 transition-all hover:scale-105 active:scale-95 animate-fade-in ${
+                                        selectedConditions.includes(condition.value)
+                                            ? 'border-primary bg-primary/10 shadow-md'
+                                            : 'border-border bg-bg hover:border-primary/50'
+                                    }`}
+                                    style={{ animationDelay: `${index * 50}ms` }}
+                                >
+                                    <Icon className={`w-8 h-8 mb-2 mx-auto ${condition.color}`} strokeWidth={2} />
+                                    <p className="text-sm font-semibold text-text text-center">
+                                        {condition.label}
+                                    </p>
+                                    {selectedConditions.includes(condition.value) && (
+                                        <div className="absolute top-2 right-2 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center animate-scale-in">
+                                            <Check className="w-4 h-4" strokeWidth={3} />
+                                        </div>
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
 
                     {/* Info Box */}
                     <div className="bg-accent/10 border border-accent/30 rounded-lg p-4 mb-6">
-                        <p className="text-sm text-text-secondary">
-                            🔒 <strong>Privacy:</strong> Your health information is confidential and used only to personalize your experience. Always consult your doctor before starting any new diet or exercise program.
+                        <p className="text-sm text-text-secondary flex items-start gap-2">
+                            <Lock className="w-5 h-5 shrink-0 text-accent mt-0.5" />
+                            <span><strong>Privacy:</strong> Your health information is confidential and used only to personalize your experience. Always consult your doctor before starting any new diet or exercise program.</span>
                         </p>
                     </div>
 
                     {/* Selected Count */}
                     {selectedConditions.length > 0 && (
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="text-center text-text-secondary mb-6"
-                        >
+                        <p className="text-center text-text-secondary mb-6 animate-fade-in">
                             {selectedConditions.length} condition{selectedConditions.length > 1 ? 's' : ''} selected
-                        </motion.p>
+                        </p>
                     )}
 
                     {/* Navigation Buttons */}
                     <div className="flex gap-4">
-                        <motion.button
+                        <button
                             onClick={onBack}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition"
+                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition hover:scale-[1.02] active:scale-[0.98]"
                         >
                             Back
-                        </motion.button>
-                        <motion.button
+                        </button>
+                        <button
                             onClick={onSkip}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition"
+                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition hover:scale-[1.02] active:scale-[0.98]"
                         >
                             Skip
-                        </motion.button>
-                        <motion.button
+                        </button>
+                        <button
                             onClick={handleNext}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="flex-2 py-3 bg-primary text-white rounded-lg font-semibold shadow-md hover:shadow-lg hover:bg-primary/90 transition"
+                            className="flex-2 py-3 bg-primary text-white rounded-lg font-semibold shadow-md hover:shadow-lg hover:bg-primary/90 transition hover:scale-[1.02] active:scale-[0.98]"
                         >
                             Continue
-                        </motion.button>
+                        </button>
                     </div>
                 </div>
-            </motion.div>
+            </div>
         </div>
     );
 };

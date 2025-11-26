@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { User, UserRound, Users, Check } from 'lucide-react';
 
 const GenderScreen = ({ onNext, onBack, initialValue = '' }) => {
     const [gender, setGender] = useState(initialValue);
 
     const genderOptions = [
-        { value: 'male', label: 'Male', emoji: '👨', color: 'from-blue-400 to-blue-600' },
-        { value: 'female', label: 'Female', emoji: '👩', color: 'from-pink-400 to-pink-600' },
-        { value: 'other', label: 'Other', emoji: '🧑', color: 'from-purple-400 to-purple-600' },
+        { value: 'male', label: 'Male', icon: User, color: 'text-blue-500', bgColor: 'bg-blue-500/20' },
+        { value: 'female', label: 'Female', icon: UserRound, color: 'text-pink-500', bgColor: 'bg-pink-500/20' },
+        { value: 'other', label: 'Other', icon: Users, color: 'text-purple-500', bgColor: 'bg-purple-500/20' },
     ];
 
     const handleNext = () => {
@@ -17,12 +17,7 @@ const GenderScreen = ({ onNext, onBack, initialValue = '' }) => {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-primary/5 via-bg to-accent/5 px-4">
-            <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                className="max-w-lg w-full"
-            >
+            <div className="max-w-lg w-full animate-slide-in-right">
                 {/* Progress Indicator */}
                 <div className="mb-8">
                     <div className="flex justify-between text-sm text-text-secondary mb-2">
@@ -30,11 +25,7 @@ const GenderScreen = ({ onNext, onBack, initialValue = '' }) => {
                         <span>27% complete</span>
                     </div>
                     <div className="w-full bg-border rounded-full h-2">
-                        <motion.div
-                            initial={{ width: '18%' }}
-                            animate={{ width: '27%' }}
-                            className="bg-primary h-2 rounded-full"
-                        />
+                        <div className="bg-primary h-2 rounded-full transition-all duration-500 animate-progress" style={{ width: '27%' }} />
                     </div>
                 </div>
 
@@ -52,70 +43,61 @@ const GenderScreen = ({ onNext, onBack, initialValue = '' }) => {
 
                     {/* Gender Options */}
                     <div className="grid grid-cols-1 gap-4 mb-8">
-                        {genderOptions.map((option, index) => (
-                            <motion.button
-                                key={option.value}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.1 }}
-                                onClick={() => setGender(option.value)}
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                                className={`relative p-6 rounded-xl border-2 transition-all ${
-                                    gender === option.value
-                                        ? 'border-primary bg-primary/10 shadow-lg'
-                                        : 'border-border bg-bg hover:border-primary/50'
-                                }`}
-                            >
-                                <div className="flex items-center">
-                                    <div className={`text-5xl mr-4 p-3 rounded-full bg-linear-to-br ${option.color}`}>
-                                        {option.emoji}
+                        {genderOptions.map((option, index) => {
+                            const Icon = option.icon;
+                            return (
+                                <button
+                                    key={option.value}
+                                    onClick={() => setGender(option.value)}
+                                    className={`relative p-6 rounded-xl border-2 transition-all hover:scale-[1.02] active:scale-[0.98] animate-fade-in ${
+                                        gender === option.value
+                                            ? 'border-primary bg-primary/10 shadow-lg'
+                                            : 'border-border bg-bg hover:border-primary/50'
+                                    }`}
+                                    style={{ animationDelay: `${index * 100}ms` }}
+                                >
+                                    <div className="flex items-center">
+                                        <div className={`p-3 rounded-full ${option.bgColor}`}>
+                                            <Icon className={`w-8 h-8 ${option.color}`} strokeWidth={2} />
+                                        </div>
+                                        <div className="text-left flex-1 ml-4">
+                                            <h3 className="text-2xl font-semibold text-text">
+                                                {option.label}
+                                            </h3>
+                                        </div>
+                                        {gender === option.value && (
+                                            <div className="text-primary animate-scale-in">
+                                                <Check className="w-8 h-8" strokeWidth={3} />
+                                            </div>
+                                        )}
                                     </div>
-                                    <div className="text-left flex-1">
-                                        <h3 className="text-2xl font-semibold text-text">
-                                            {option.label}
-                                        </h3>
-                                    </div>
-                                    {gender === option.value && (
-                                        <motion.div
-                                            initial={{ scale: 0 }}
-                                            animate={{ scale: 1 }}
-                                            className="text-primary text-3xl"
-                                        >
-                                            ✓
-                                        </motion.div>
-                                    )}
-                                </div>
-                            </motion.button>
-                        ))}
+                                </button>
+                            );
+                        })}
                     </div>
 
                     {/* Navigation Buttons */}
                     <div className="flex gap-4">
-                        <motion.button
+                        <button
                             onClick={onBack}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition"
+                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition hover:scale-[1.02] active:scale-[0.98]"
                         >
                             Back
-                        </motion.button>
-                        <motion.button
+                        </button>
+                        <button
                             onClick={handleNext}
                             disabled={!gender}
-                            whileHover={{ scale: gender ? 1.02 : 1 }}
-                            whileTap={{ scale: gender ? 0.98 : 1 }}
                             className={`flex-2 py-3 rounded-lg font-semibold shadow-md transition ${
                                 gender
-                                    ? 'bg-primary text-white hover:shadow-lg hover:bg-primary/90'
+                                    ? 'bg-primary text-white hover:shadow-lg hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]'
                                     : 'bg-border text-text-secondary cursor-not-allowed'
                             }`}
                         >
                             Continue
-                        </motion.button>
+                        </button>
                     </div>
                 </div>
-            </motion.div>
+            </div>
         </div>
     );
 };

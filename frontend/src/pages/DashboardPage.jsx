@@ -1,5 +1,14 @@
-import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { 
+    BarChart3, 
+    TrendingDown, 
+    Calendar, 
+    Flame, 
+    Lightbulb, 
+    Target,
+    ArrowLeft,
+    Activity
+} from 'lucide-react';
 
 export default function DashboardPage() {
   const navigate = useNavigate();
@@ -54,12 +63,15 @@ export default function DashboardPage() {
               onClick={() => navigate('/')}
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
+              <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">📊 Dashboard</h1>
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <BarChart3 className="w-6 h-6 text-primary" />
+                </div>
+                <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+              </div>
               <p className="text-sm text-gray-500">Track your daily progress and trends</p>
             </div>
           </div>
@@ -69,13 +81,15 @@ export default function DashboardPage() {
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
         
         {/* Daily Overview Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-br from-[#06D6A0]/10 via-white to-[#073B4C]/10 rounded-2xl p-6 shadow-lg border border-gray-100"
-        >
+        <div className="bg-linear-to-br from-[#06D6A0]/10 via-white to-[#073B4C]/10 rounded-2xl p-6 shadow-lg border border-gray-100 animate-fade-in">
+
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">🌟 Today's Overview</h2>
+            <div className="flex items-center gap-2">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Activity className="w-6 h-6 text-primary" />
+              </div>
+              <h2 className="text-xl font-bold text-gray-900">Today's Overview</h2>
+            </div>
             <div className="text-sm text-gray-500">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}</div>
           </div>
 
@@ -83,7 +97,7 @@ export default function DashboardPage() {
             {/* Calories In */}
             <div className="bg-white rounded-xl p-4 shadow-sm">
               <div className="text-sm text-gray-600 mb-1">Calories In</div>
-              <div className="text-3xl font-bold bg-gradient-to-r from-[#FFD166] to-[#EF476F] bg-clip-text text-transparent">
+              <div className="text-3xl font-bold bg-linear-to-r from-[#FFD166] to-[#EF476F] bg-clip-text text-transparent">
                 {today.caloriesConsumed}
               </div>
               <div className="text-xs text-gray-500 mt-1">from nutrition</div>
@@ -92,7 +106,7 @@ export default function DashboardPage() {
             {/* Calories Out */}
             <div className="bg-white rounded-xl p-4 shadow-sm">
               <div className="text-sm text-gray-600 mb-1">Calories Out</div>
-              <div className="text-3xl font-bold bg-gradient-to-r from-[#06D6A0] to-[#073B4C] bg-clip-text text-transparent">
+              <div className="text-3xl font-bold bg-linear-to-r from-[#06D6A0] to-[#073B4C] bg-clip-text text-transparent">
                 {today.caloriesBurned}
               </div>
               <div className="text-xs text-gray-500 mt-1">from workouts</div>
@@ -117,11 +131,9 @@ export default function DashboardPage() {
               </span>
             </div>
             <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-[#06D6A0] to-[#073B4C]"
-                initial={{ width: 0 }}
-                animate={{ width: `${Math.min((today.caloriesConsumed / today.caloriesTarget) * 100, 100)}%` }}
-                transition={{ duration: 1, delay: 0.3 }}
+              <div
+                className="h-full bg-linear-to-r from-[#06D6A0] to-[#073B4C] transition-all duration-1000 ease-out"
+                style={{ width: `${Math.min((today.caloriesConsumed / today.caloriesTarget) * 100, 100)}%` }}
               />
             </div>
             <div className="flex justify-between text-xs text-gray-500 mt-2">
@@ -129,18 +141,19 @@ export default function DashboardPage() {
               <span>Target: {today.caloriesTarget} kcal</span>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
           
           {/* Calorie Bar Chart */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
-          >
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">📊 Weekly Calories</h3>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in">
+
+            <div className="flex items-center gap-2 mb-6">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <BarChart3 className="w-5 h-5 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Weekly Calories</h3>
+            </div>
             
             <div className="space-y-3">
               {weeklyCalories.map((day, i) => {
@@ -154,15 +167,13 @@ export default function DashboardPage() {
                       <span className="font-medium text-gray-900">{day.consumed} kcal</span>
                     </div>
                     <div className="relative h-8 bg-gray-100 rounded-lg overflow-hidden">
-                      <motion.div
-                        className={`h-full rounded-lg ${
+                      <div
+                        className={`h-full rounded-lg transition-all duration-700 ease-out ${
                           isOverTarget 
-                            ? 'bg-gradient-to-r from-[#EF476F] to-[#FFD166]' 
-                            : 'bg-gradient-to-r from-[#06D6A0] to-[#073B4C]'
+                            ? 'bg-linear-to-r from-[#EF476F] to-[#FFD166]' 
+                            : 'bg-linear-to-r from-[#06D6A0] to-[#073B4C]'
                         }`}
-                        initial={{ width: 0 }}
-                        animate={{ width: `${percentage}%` }}
-                        transition={{ duration: 0.6, delay: 0.2 + i * 0.05 }}
+                        style={{ width: `${percentage}%` }}
                       />
                       {/* Target line */}
                       <div 
@@ -177,11 +188,11 @@ export default function DashboardPage() {
 
             <div className="mt-4 flex items-center gap-4 text-xs text-gray-500">
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-gradient-to-r from-[#06D6A0] to-[#073B4C] rounded"></div>
+                <div className="w-3 h-3 bg-linear-to-r from-[#06D6A0] to-[#073B4C] rounded"></div>
                 <span>On track</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-gradient-to-r from-[#EF476F] to-[#FFD166] rounded"></div>
+                <div className="w-3 h-3 bg-linear-to-r from-[#EF476F] to-[#FFD166] rounded"></div>
                 <span>Over target</span>
               </div>
               <div className="flex items-center gap-2">
@@ -189,16 +200,17 @@ export default function DashboardPage() {
                 <span>Target</span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Weight Line Chart */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
-          >
-            <h3 className="text-lg font-semibold text-gray-900 mb-6">📈 Weight Trend (7 Days)</h3>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in">
+
+            <div className="flex items-center gap-2 mb-6">
+              <div className="p-2 bg-green-100 rounded-lg">
+                <TrendingDown className="w-5 h-5 text-green-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Weight Trend (7 Days)</h3>
+            </div>
             
             <div className="relative h-48">
               <svg className="w-full h-full" viewBox="0 0 700 200" preserveAspectRatio="none">
@@ -216,7 +228,7 @@ export default function DashboardPage() {
                 ))}
 
                 {/* Line path */}
-                <motion.path
+                <path
                   d={`M ${weightTrend.map((w, i) => {
                     const x = (i / (weightTrend.length - 1)) * 700;
                     const minWeight = Math.min(...weightTrend);
@@ -228,13 +240,11 @@ export default function DashboardPage() {
                   stroke="url(#lineGradient)"
                   strokeWidth="3"
                   strokeLinecap="round"
-                  initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
-                  transition={{ duration: 1.5, delay: 0.3 }}
+                  className="animate-draw-line"
                 />
 
                 {/* Area under line */}
-                <motion.path
+                <path
                   d={`M ${weightTrend.map((w, i) => {
                     const x = (i / (weightTrend.length - 1)) * 700;
                     const minWeight = Math.min(...weightTrend);
@@ -243,9 +253,7 @@ export default function DashboardPage() {
                     return `${i === 0 ? 'M' : 'L'} ${x},${y}`;
                   }).join(' ')} L 700,200 L 0,200 Z`}
                   fill="url(#areaGradient)"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 1, delay: 0.5 }}
+                  className="animate-fade-in"
                 />
 
                 {/* Data points */}
@@ -256,7 +264,7 @@ export default function DashboardPage() {
                   const y = 180 - ((w - minWeight) / (maxWeight - minWeight)) * 160;
                   
                   return (
-                    <motion.circle
+                    <circle
                       key={i}
                       cx={x}
                       cy={y}
@@ -264,9 +272,7 @@ export default function DashboardPage() {
                       fill="white"
                       stroke="#06D6A0"
                       strokeWidth="2"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.5 + i * 0.1 }}
+                      className="animate-scale-in"
                     />
                   );
                 })}
@@ -295,7 +301,7 @@ export default function DashboardPage() {
                 ↓ {Math.abs(weeklyData.weightChange)} kg this week - Great progress!
               </p>
             </div>
-          </motion.div>
+          </div>
 
         </div>
 
@@ -303,18 +309,19 @@ export default function DashboardPage() {
         <div className="grid md:grid-cols-3 gap-6">
           
           {/* Weekly Summary */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white rounded-xl p-6 shadow-sm border border-gray-100"
-          >
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">📅 Weekly Summary</h3>
+          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-fade-in">
+
+            <div className="flex items-center gap-2 mb-4">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Calendar className="w-5 h-5 text-primary" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Weekly Summary</h3>
+            </div>
             
             <div className="space-y-4">
               <div>
                 <div className="text-sm text-gray-600">Avg Daily Calories</div>
-                <div className="text-2xl font-bold bg-gradient-to-r from-[#06D6A0] to-[#073B4C] bg-clip-text text-transparent">
+                <div className="text-2xl font-bold bg-linear-to-r from-[#06D6A0] to-[#073B4C] bg-clip-text text-transparent">
                   {weeklyData.avgCalories}
                 </div>
               </div>
@@ -323,11 +330,9 @@ export default function DashboardPage() {
                 <div className="text-sm text-gray-600 mb-2">Goal Completion</div>
                 <div className="text-2xl font-bold text-gray-900 mb-2">{weeklyData.goalCompletion}%</div>
                 <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <motion.div
-                    className="h-full bg-gradient-to-r from-[#06D6A0] to-[#073B4C]"
-                    initial={{ width: 0 }}
-                    animate={{ width: `${weeklyData.goalCompletion}%` }}
-                    transition={{ duration: 1, delay: 0.5 }}
+                  <div
+                    className="h-full bg-linear-to-r from-[#06D6A0] to-[#073B4C] transition-all duration-1000 ease-out"
+                    style={{ width: `${weeklyData.goalCompletion}%` }}
                   />
                 </div>
               </div>
@@ -337,16 +342,17 @@ export default function DashboardPage() {
                 <div className="text-2xl font-bold text-gray-900">{weeklyData.daysActive}/7</div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Streak Counter */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-gradient-to-br from-[#FFD166] to-[#EF476F] rounded-xl p-6 shadow-lg text-white"
-          >
-            <h3 className="text-lg font-semibold mb-4">🔥 Streak</h3>
+          <div className="bg-linear-to-br from-[#FFD166] to-[#EF476F] rounded-xl p-6 shadow-lg text-white animate-fade-in">
+
+            <div className="flex items-center gap-2 mb-4">
+              <div className="p-2 bg-white/20 rounded-lg">
+                <Flame className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-semibold">Streak</h3>
+            </div>
             
             <div className="text-center">
               <div className="text-6xl font-bold mb-2">{streak.current}</div>
@@ -357,29 +363,39 @@ export default function DashboardPage() {
                 <div className="text-2xl font-bold">{streak.longest} days</div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Motivational Insights */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-gradient-to-br from-[#073B4C] to-[#118AB2] rounded-xl p-6 shadow-lg text-white"
-          >
-            <h3 className="text-lg font-semibold mb-4">💡 Insights</h3>
+          <div className="bg-linear-to-br from-[#073B4C] to-[#118AB2] rounded-xl p-6 shadow-lg text-white animate-fade-in">
+
+            <div className="flex items-center gap-2 mb-4">
+              <div className="p-2 bg-white/20 rounded-lg">
+                <Lightbulb className="w-6 h-6" />
+              </div>
+              <h3 className="text-lg font-semibold">Insights</h3>
+            </div>
             
             <div className="space-y-3 text-sm">
-              <p className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                ✨ Your consistency improved by <strong>12%</strong> this month!
+              <p className="bg-white/10 backdrop-blur-sm rounded-lg p-3 flex items-start gap-2">
+                <div className="p-1.5 bg-white/20 rounded-md mt-0.5">
+                  <Activity className="w-4 h-4 shrink-0" />
+                </div>
+                <span>Your consistency improved by <strong>12%</strong> this month!</span>
               </p>
-              <p className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                🎯 You're <strong>86%</strong> on track to reach your weekly goal.
+              <p className="bg-white/10 backdrop-blur-sm rounded-lg p-3 flex items-start gap-2">
+                <div className="p-1.5 bg-white/20 rounded-md mt-0.5">
+                  <Target className="w-4 h-4 shrink-0" />
+                </div>
+                <span>You're <strong>86%</strong> on track to reach your weekly goal.</span>
               </p>
-              <p className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                💪 Keep it up! You've logged workouts <strong>6 days</strong> this week.
+              <p className="bg-white/10 backdrop-blur-sm rounded-lg p-3 flex items-start gap-2">
+                <div className="p-1.5 bg-white/20 rounded-md mt-0.5">
+                  <Flame className="w-4 h-4 shrink-0" />
+                </div>
+                <span>Keep it up! You've logged workouts <strong>6 days</strong> this week.</span>
               </p>
             </div>
-          </motion.div>
+          </div>
 
         </div>
 

@@ -1,4 +1,14 @@
 import { Link } from 'react-router-dom';
+import { 
+  ArrowRight, 
+  Play, 
+  Apple, 
+  Dumbbell, 
+  BarChart3, 
+  Bell, 
+  Target, 
+  Sparkles 
+} from 'lucide-react';
 
 function Home() {
   return (
@@ -43,19 +53,14 @@ function Home() {
                   <button className="group px-10 py-5 bg-[#06D6A0] text-white rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 hover:-translate-y-1 transition-all duration-300">
                     <span className="flex items-center gap-2">
                       Start Free Trial
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="group-hover:translate-x-1 transition-transform">
-                        <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </span>
                   </button>
                 </Link>
 
                 <button className="px-10 py-5 bg-white text-gray-900 rounded-2xl font-bold text-lg border-2 border-gray-200 shadow-md hover:border-[#06D6A0]/50 hover:shadow-lg hover:scale-105 hover:-translate-y-1 transition-all duration-300">
                   <span className="flex items-center gap-2">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M10 8l6 4-6 4V8z" fill="currentColor" />
-                    </svg>
+                    <Play className="w-5 h-5 fill-current" />
                     Watch Demo
                   </span>
                 </button>
@@ -78,54 +83,52 @@ function Home() {
               </div>
             </div>
 
-            {/* Right - Dashboard Preview */}
-            <div className="relative h-[600px] hidden lg:flex items-center justify-center">
-              <div className="bg-white rounded-3xl p-8 border-2 border-[#06D6A0]/30 shadow-2xl w-80 hover:scale-105 hover:-translate-y-2 transition-all duration-500">
-                <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#06D6A0] to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-                    <path d="M12 2L15 9L22 12L15 15L12 22L9 15L2 12L9 9L12 2Z" fill="white" />
-                  </svg>
-                </div>
+           { /* Right - Dashboard Preview */}
+                  <div className="relative h-[600px] hidden lg:flex items-center justify-center">
+                    <div className="bg-white rounded-3xl p-8 border-2 border-[#06D6A0]/30 shadow-2xl w-80 hover:scale-105 hover:-translate-y-2 transition-all duration-500">
+                    <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-[#06D6A0] to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
+                      <Sparkles className="w-10 h-10 text-white" fill="white" stroke="white" strokeWidth={0} />
+                    </div>
 
-                <h3 className="text-2xl font-bold text-gray-900 text-center mb-2">
-                  Today's Goals
-                </h3>
-                <p className="text-gray-500 text-center text-sm mb-6">
-                  Track your macros live
-                </p>
+                    <h3 className="text-2xl font-bold text-gray-900 text-center mb-2">
+                      Today's Goals
+                    </h3>
+                    <p className="text-gray-500 text-center text-sm mb-6">
+                      Track your macros live
+                    </p>
 
-                <div className="space-y-4">
-                  {[
-                    { label: 'Protein', value: 85, color: '#06D6A0' },
-                    { label: 'Carbs', value: 70, color: '#38BDF8' },
-                    { label: 'Fats', value: 92, color: '#22D3EE' },
-                  ].map((item) => (
-                    <div key={item.label}>
-                      <div className="flex justify-between text-sm mb-2">
+                    <div className="space-y-4">
+                      {[
+                      { label: 'Protein', value: 85, color: '#06D6A0' },
+                      { label: 'Carbs', value: 70, color: '#38BDF8' },
+                      { label: 'Fats', value: 92, color: '#22D3EE' },
+                      ].map((item) => (
+                      <div key={item.label}>
+                        <div className="flex justify-between text-sm mb-2">
                         <span className="text-gray-700 font-semibold">{item.label}</span>
                         <span className="font-bold" style={{ color: item.color }}>
                           {item.value}%
                         </span>
-                      </div>
-                      <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                        </div>
+                        <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all duration-1000 ease-out"
                           style={{ 
-                            background: item.color,
-                            width: `${item.value}%`
+                          background: item.color,
+                          width: `${item.value}%`
                           }}
                         />
+                        </div>
                       </div>
+                      ))}
                     </div>
-                  ))}
+                    </div>
+                  </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+                </section>
 
-      {/* Features Section */}
+                {/* Features Section */}
       <section id="tracker" className="relative bg-gradient-to-b from-white via-cyan-50/20 to-white py-32 overflow-hidden">
         {/* Background decoration */}
         <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-[#06D6A0]/15 blur-3xl opacity-30" />
@@ -149,11 +152,7 @@ function Home() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
             {[
               { 
-                icon: (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
-                  </svg>
-                ),
+                icon: Apple,
                 title: 'Nutrition Tracking', 
                 desc: 'Log meals effortlessly with smart food database and barcode scanner.',
                 accentColor: '#06D6A0',
@@ -161,17 +160,7 @@ function Home() {
                 link: '/nutrition'
               },
               { 
-                icon: (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M6.5 6.5l11 11"/>
-                    <path d="M17.5 6.5l-11 11"/>
-                    <circle cx="12" cy="12" r="1"/>
-                    <path d="M5 5h3v3H5z"/>
-                    <path d="M16 5h3v3h-3z"/>
-                    <path d="M5 16h3v3H5z"/>
-                    <path d="M16 16h3v3h-3z"/>
-                  </svg>
-                ),
+                icon: Dumbbell,
                 title: 'Workout Tracking', 
                 desc: 'Track exercises with activity rings and auto-calculated calories.',
                 accentColor: '#38BDF8',
@@ -179,13 +168,7 @@ function Home() {
                 link: '/workouts'
               },
               { 
-                icon: (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <rect x="3" y="14" width="4" height="7" rx="1"/>
-                    <rect x="10" y="9" width="4" height="12" rx="1"/>
-                    <rect x="17" y="4" width="4" height="17" rx="1"/>
-                  </svg>
-                ),
+                icon: BarChart3,
                 title: 'Progress Reports', 
                 desc: 'Beautiful charts and insights to track your fitness journey.',
                 accentColor: '#22D3EE',
@@ -193,12 +176,7 @@ function Home() {
                 link: '/reports'
               },
               { 
-                icon: (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <circle cx="12" cy="12" r="10"/>
-                    <polyline points="12 6 12 12 16 14"/>
-                  </svg>
-                ),
+                icon: Bell,
                 title: 'Smart Reminders', 
                 desc: 'Never miss a meal or workout with intelligent notifications.',
                 accentColor: '#06D6A0',
@@ -206,13 +184,7 @@ function Home() {
                 link: '/settings'
               },
               { 
-                icon: (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <circle cx="12" cy="12" r="10"/>
-                    <circle cx="12" cy="12" r="6"/>
-                    <circle cx="12" cy="12" r="2"/>
-                  </svg>
-                ),
+                icon: Target,
                 title: 'Goal Setting', 
                 desc: 'Set personalized goals and celebrate your achievements.',
                 accentColor: '#38BDF8',
@@ -220,51 +192,47 @@ function Home() {
                 link: '/#progress'
               },
               { 
-                icon: (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <circle cx="12" cy="12" r="3"/>
-                    <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"/>
-                  </svg>
-                ),
+                icon: Sparkles,
                 title: 'Customization', 
                 desc: 'Personalize units, theme, and preferences to match your style.',
                 accentColor: '#22D3EE',
                 iconBg: 'from-cyan-400/10 to-sky-400/10',
                 link: '/settings'
               },
-            ].map((feature) => (
-              <div key={feature.title} className="group">
-                <Link to={feature.link}>
-                  <div className="relative h-full bg-white/70 backdrop-blur-md p-8 lg:p-10 rounded-3xl shadow-lg hover:shadow-2xl hover:-translate-y-3 hover:scale-[1.02] transition-all duration-300 cursor-pointer">
-                    {/* Icon */}
-                    <div 
-                      className={`inline-flex items-center justify-center w-20 h-20 mb-6 rounded-2xl bg-gradient-to-br ${feature.iconBg} group-hover:scale-110 transition-transform duration-300`}
-                      style={{ color: feature.accentColor }}
-                    >
-                      {feature.icon}
+            ].map((feature) => {
+              const IconComponent = feature.icon;
+              return (
+                <div key={feature.title} className="group">
+                  <Link to={feature.link}>
+                    <div className="relative h-full bg-white/70 backdrop-blur-md p-8 lg:p-10 rounded-3xl shadow-lg hover:shadow-2xl hover:-translate-y-3 hover:scale-[1.02] transition-all duration-300 cursor-pointer">
+                      {/* Icon */}
+                      <div 
+                        className={`inline-flex items-center justify-center w-20 h-20 mb-6 rounded-2xl bg-gradient-to-br ${feature.iconBg} group-hover:scale-110 transition-transform duration-300`}
+                        style={{ color: feature.accentColor }}
+                      >
+                        <IconComponent className="w-8 h-8" strokeWidth={2.5} />
+                      </div>
+                      
+                      <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                        {feature.title}
+                      </h3>
+                      <p className="text-gray-600 leading-relaxed text-base mb-6">
+                        {feature.desc}
+                      </p>
+                      
+                      {/* Arrow */}
+                      <div
+                        className="flex items-center gap-2 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300"
+                        style={{ color: feature.accentColor }}
+                      >
+                        <span>Explore</span>
+                        <ArrowRight className="w-5 h-5" strokeWidth={2.5} />
+                      </div>
                     </div>
-                    
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                      {feature.title}
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed text-base mb-6">
-                      {feature.desc}
-                    </p>
-                    
-                    {/* Arrow */}
-                    <div
-                      className="flex items-center gap-2 font-semibold text-sm group-hover:translate-x-2 transition-transform duration-300"
-                      style={{ color: feature.accentColor }}
-                    >
-                      <span>Explore</span>
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                      </svg>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            ))}
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
