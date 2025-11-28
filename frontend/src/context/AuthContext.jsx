@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
 import authApi from "../api/authApi";
 import { authReducer, initialState } from "./authReducer";
+import { setAccessToken } from "@/api/axiosClient";
 
 const AuthContext = createContext();
 
@@ -10,10 +11,9 @@ export function AuthProvider({ children }) {
   // CHECK SESSION
   const fetchUser = async () => {
     dispatch({ type: "LOADING" });
-
     try {
       const res = await authApi.getMe();
-      dispatch({ type: "FETCH_SUCCESS", payload: res.data.user });
+      dispatch({ type: "FETCH_SUCCESS", payload: res.data.data });
     } catch {
       dispatch({ type: "ERROR", payload: null });
     }
@@ -36,25 +36,23 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // LOGIN
+  // LOGIN FUNCTION
   const login = async (credentials) => {
     dispatch({ type: "LOADING" });
 
     try {
       const res = await authApi.login(credentials);
 
-      // ❌ before: state updated only with short token
-      // ✔ fix: manually set user
-      dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
+      dispatch({ type: "LOGIN_SUCCESS", payload: res.data.data?.user });
 
-      // 🔥 IMPORTANT - fetchUser after cookie is set
-      await fetchUser();
+      setAccessToken(res.data.token);
 
       return res.data;
     } catch (err) {
+      setAccessToken(null);
       dispatch({
         type: "ERROR",
-        payload: err.response?.data?.message || "Login failed",
+        payload: err.response?.data?.message || err.message,
       });
       throw err;
     }
@@ -65,7 +63,13 @@ export function AuthProvider({ children }) {
   }, []);
 
   //logout
-  const logout = () => dispatch({ type: "LOGOUT" });
+  const logout = async () => {
+    try {
+      await authApi.logout();
+    } catch {}
+    setAccessToken(null);
+    dispatch({ type: "LOGOUT" });
+  };
 
   return (
     <AuthContext.Provider

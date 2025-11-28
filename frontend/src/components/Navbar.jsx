@@ -3,13 +3,23 @@ import Logo from "../assets/Logo";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "./ui/button";
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { ArrowDownIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const [open, setOpen] = useState(false);
 
   // Handle scroll effect
   useEffect(() => {
@@ -37,7 +47,7 @@ const Navbar = () => {
     { name: "Nutrition", href: "/nutrition", type: "route" },
     { name: "Workouts", href: "/workouts", type: "route" },
     { name: "Progress", href: "/goals", type: "route" },
-    { name: "Settings", href: "/settings", type: "route" },
+    // { name: "Settings", href: "/settings", type: "route" },
   ];
 
   const handleLinkClick = (href, type) => {
@@ -126,19 +136,57 @@ const Navbar = () => {
 
             {/* NAVBAR AUTH */}
             {isAuthenticated ? (
-              <div className="flex items-center gap-3">
-                <span className="font-medium text-gray-700">
-                  Hi, {user?.name?.split(" ")[0]} 👋
-                </span>
+              <DropdownMenu onOpenChange={setOpen} open={open}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="secondary"
+                    className="flex items-center gap-2 px-0  rounded-full transition-all hover"
+                  >
+                    {/* Optional first name (show only on desktop) */}
+                    <span className="hidden sm:inline p-2 font-semibold bg-linear-to-r from-[#00cd96] to-[#073B4C] bg-clip-text text-transparent">
+                      Hi {user?.name?.trim().split(" ")[0]}
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-gray-600 transition-transform duration-300 ${
+                        open ? "rotate-180" : ""
+                      }`}
+                    />
+                  </Button>
+                </DropdownMenuTrigger>
 
-                <Button
-                  variant="outline"
-                  onClick={handleLogout}
-                  className="hover:bg-red-500 hover:text-white transition-all"
-                >
-                  Logout
-                </Button>
-              </div>
+                <DropdownMenuContent className="w-56 shadow-lg border-gray-100 rounded-lg">
+                  <DropdownMenuLabel className="flex flex-col gap-1">
+                    <span className="text-gray-900 font-semibold">
+                      {user?.name?.trim()}
+                    </span>
+                    <span className="text-xs text-gray-500">{user?.email}</span>
+                  </DropdownMenuLabel>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard" className="w-full cursor-pointer">
+                      {" "}
+                      Dashboard{" "}
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link to="/settings" className="w-full cursor-pointer">
+                      Setting
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuItem
+                    onClick={logout}
+                    className="text-red-500 cursor-pointer font-medium hover:bg-red-50"
+                  >
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <div className="flex items-center gap-3">
                 <Link
@@ -230,28 +278,28 @@ const Navbar = () => {
             })}
 
             {isAuthenticated && (
-
-                <div className="w-full max-w-sm border-t border-gray-200 pt-3 mt-3 space-y-2">
-              <Link to="/login" onClick={() => setIsOpen(false)}>
-                <button
-                  className="w-full px-5 py-3 bg-gray-50 hover:bg-[#06D6A0]/10 text-gray-900 rounded-lg font-semibold text-base transition-all hover:scale-[1.02] hover:-translate-y-0.5 active:scale-98 animate-fade-in"
-                  style={{ animationDelay: `${navLinks.length * 70}ms` }}
+              <div className="w-full max-w-sm border-t border-gray-200 pt-3 mt-3 space-y-2">
+                <Link to="/login" onClick={() => setIsOpen(false)}>
+                  <button
+                    className="w-full px-5 py-3 bg-gray-50 hover:bg-[#06D6A0]/10 text-gray-900 rounded-lg font-semibold text-base transition-all hover:scale-[1.02] hover:-translate-y-0.5 active:scale-98 animate-fade-in"
+                    style={{ animationDelay: `${navLinks.length * 70}ms` }}
                   >
-                  Login
-                </button>
-              </Link>
+                    Login
+                  </button>
+                </Link>
 
-              <Link to="/signup" onClick={() => setIsOpen(false)}>
-                <button
-                  className="w-full px-5 py-3 bg-[#06D6A0] text-white rounded-lg font-semibold text-base shadow-md transition-all hover:scale-[1.02] hover:-translate-y-0.5 active:scale-98 animate-fade-in"
-                  style={{ animationDelay: `${(navLinks.length + 1) * 70}ms` }}
+                <Link to="/signup" onClick={() => setIsOpen(false)}>
+                  <button
+                    className="w-full px-5 py-3 bg-[#06D6A0] text-white rounded-lg font-semibold text-base shadow-md transition-all hover:scale-[1.02] hover:-translate-y-0.5 active:scale-98 animate-fade-in"
+                    style={{
+                      animationDelay: `${(navLinks.length + 1) * 70}ms`,
+                    }}
                   >
-                  Sign Up
-                </button>
-              </Link>
-            </div>
-                )}
-
+                    Sign Up
+                  </button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       )}
