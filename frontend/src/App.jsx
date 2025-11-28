@@ -21,6 +21,11 @@ import DashboardPage from "./pages/DashboardPage";
 import { Toaster } from "./components/ui/sonner";
 import VerifyEmail from "./pages/VerifyEmail";
 import { AuthProvider } from "./context/AuthContext";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import { useAuth } from "./context/AuthContext";
+import { Navigate } from "react-router-dom";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 // Component to handle scroll reset on route change
 function ScrollToTop() {
@@ -34,6 +39,8 @@ function ScrollToTop() {
 }
 
 function App() {
+  const { user } = useAuth();
+
   return (
     <>
       <AuthProvider>
@@ -42,7 +49,6 @@ function App() {
           <ScrollToTop />
           <div className="min-h-dvh">
             <Routes>
-              {/* Routes with Navbar */}
               <Route
                 path="/"
                 element={
@@ -53,96 +59,43 @@ function App() {
                 }
               />
 
-              {/* Auth routes without main navbar */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
+              {/* Auth guard: redirect if logged in */}
+              <Route
+                path="/login"
+                element={!user ? <Login /> : <Navigate to="/dashboard" />}
+              />
+              <Route
+                path="/signup"
+                element={!user ? <Signup /> : <Navigate to="/dashboard" />}
+              />
+              
               <Route path="/verify-email" element={<VerifyEmail />} />
-              {/* Onboarding flow */}
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/reset-password" element={ <ResetPasswordPage />} />
 
-              {/* Nutrition Tab with Navbar */}
-              <Route
-                path="/nutrition"
-                element={
-                  <>
-                    <Navbar />
-                    <NutritionTab />
-                  </>
-                }
-              />
-              <Route
-                path="/nutrition/add"
-                element={
-                  <>
-                    <Navbar />
-                    <AddFoodPage />
-                  </>
-                }
-              />
-
-              {/* Workouts Tab with Navbar */}
-              <Route
-                path="/workouts"
-                element={
-                  <>
-                    <Navbar />
-                    <WorkoutsTab />
-                  </>
-                }
-              />
-              <Route
-                path="/workouts/add"
-                element={
-                  <>
-                    <Navbar />
-                    <AddWorkoutPage />
-                  </>
-                }
-              />
-
-              {/* Settings & Reports */}
-              <Route
-                path="/settings"
-                element={
-                  <>
-                    <Navbar />
-                    <SettingsPage />
-                  </>
-                }
-              />
-              <Route
-                path="/reports"
-                element={
-                  <>
-                    <Navbar />
-                    <ReportsPage />
-                  </>
-                }
-              />
-
-              {/* Goals & Dashboard */}
-              <Route
-                path="/goals"
-                element={
-                  <>
-                    <Navbar />
-                    <GoalsPage />
-                  </>
-                }
-              />
+              {/* EXAMPLE PROTECTED ROUTE */}
               <Route
                 path="/dashboard"
                 element={
-                  <>
-                    <Navbar />
+                  <ProtectedRoute>
                     <DashboardPage />
-                  </>
+                  </ProtectedRoute>
                 }
               />
+
+              {/* Other routes */}
+              <Route path="/nutrition" element={<><Navbar /><NutritionTab /></>} />
+              <Route path="/nutrition/add" element={<><Navbar /><AddFoodPage /></>} />
+              <Route path="/workouts" element={<><Navbar /><WorkoutsTab /></>} />
+              <Route path="/workouts/add" element={<><Navbar /><AddWorkoutPage /></>} />
+              <Route path="/settings" element={<><Navbar /><SettingsPage /></>} />
+              <Route path="/reports" element={<><Navbar /><ReportsPage /></>} />
+              <Route path="/goals" element={<><Navbar /><GoalsPage /></>} />
             </Routes>
           </div>
         </Router>
-      </AuthProvider>        
+      </AuthProvider>
     </>
   );
 }
