@@ -1,0 +1,37 @@
+meta {
+  name: New on bording
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{url}}/v1/user/profile/onboard
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "age": 28,
+    "height": 143,
+    "weight": 70,
+    "gender": "male",
+    "dietaryPreferences": {
+      "dietType": "vegetarian",
+      "allergies": ["peanuts", "shellfish"],
+      "dislikes": ["broccoli", "mushrooms"]
+    },
+    "waterIntakeGoal": 2500,
+    "sleepGoal": 8,
+    "goals": {
+      "weightGoal": 65,
+      "activityLevel": "moderately active",
+      "calorieGoal": 2000
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

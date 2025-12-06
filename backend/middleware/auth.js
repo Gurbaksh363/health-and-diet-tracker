@@ -1,19 +1,39 @@
 import jwt from "jsonwebtoken";
 import ApiError from "./error-handler.js";
 import User from "../models/user.js";
+import redisClient from "../config/redis.js";
 
 export const authenticate = async (req, res, next) => {
     try {
-        // Get token from header
+        let token = null;
+        let isSessionToken = false;
+
+        // Try to get token from Authorization header (access token)
         const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        }
+
+        // If no access token, try session token from cookie
+        if (!token && req.cookies?.session_token) {
+            token = req.cookies.session_token;
+            isSessionToken = true;
+        }
+
+        if (!token) {
             return next(new ApiError(401, "No token provided", "UNAUTHORIZED"));
         }
 
-        const token = authHeader.substring(7); // Remove 'Bearer ' prefix
-
         // Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET || "your-secret-key");
+
+        // If it's a session token, check if it's still valid in Redis
+        if (isSessionToken) {
+            const sessionExists = await redisClient.get(`session:${decoded.userId}`);
+            if (!sessionExists) {
+                return next(new ApiError(401, "Session expired or invalid", "SESSION_EXPIRED"));
+            }
+        }
 
         // Check if user exists
         const user = await User.findById(decoded.userId).select("-password");
@@ -45,13 +65,34 @@ export const authenticate = async (req, res, next) => {
 // Optional: Middleware that doesn't require email verification
 export const authenticateWithoutVerification = async (req, res, next) => {
     try {
+        let token = null;
+        let isSessionToken = false;
+
+        // Try to get token from Authorization header (access token)
         const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        if (authHeader && authHeader.startsWith("Bearer ")) {
+            token = authHeader.substring(7);
+        }
+
+        // If no access token, try session token from cookie
+        if (!token && req.cookies?.session_token) {
+            token = req.cookies.session_token;
+            isSessionToken = true;
+        }
+
+        if (!token) {
             return next(new ApiError(401, "No token provided", "UNAUTHORIZED"));
         }
 
-        const token = authHeader.substring(7);
         const decoded = jwt.verify(token, process.env.JWT_SECRET || "your-secret-key");
+
+        // If it's a session token, check if it's still valid in Redis
+        if (isSessionToken) {
+            const sessionExists = await redisClient.get(`session:${decoded.userId}`);
+            if (!sessionExists) {
+                return next(new ApiError(401, "Session expired or invalid", "SESSION_EXPIRED"));
+            }
+        }
 
         const user = await User.findById(decoded.userId).select("-password");
         if (!user) {

@@ -4,24 +4,33 @@ import cors from "cors";
 import v1Router from "./routes/v1.js";
 import connectDB from "./config/mongo-db.js";
 import config from "./config/index.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 // cors
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//     credentials: true,
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
+
+
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
+
+app.use(cookieParser());
 
 // app.options("*", cors());
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Credentials", "true");
+//   next();
+// });
 
 // Middleware
 app.use(express.json());

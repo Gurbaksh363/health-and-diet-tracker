@@ -1,0 +1,25 @@
+meta {
+  name: Refersh Token
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{url}}/v1/user/auth/refresh-token
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  if (res?.body?.token) {
+    bru.setEnvVar('acess_token', res.body.token);
+  } else {
+    console.warn("accessToken not found in response");
+  }
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

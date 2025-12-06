@@ -6,10 +6,9 @@ import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import authApi from "@/api/authApi";
 
-
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth(); 
+  const { login } = useAuth();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [showResend, setShowResend] = useState(false);
@@ -30,26 +29,24 @@ const Login = () => {
 
       return navigate("/dashboard");
     } catch (err) {
-      const msg = err.response?.data?.message;
-      const code = err.response?.data?.error?.code;
+      const error = err.response?.data;
 
-      if (code === "EMAIL_NOT_VERIFIED") {
-        toast.error("Email not verified ❌");
+      if (error?.error?.code === "EMAIL_NOT_VERIFIED") {
+        toast.error(error.message || "Email not verified ❌");
         setShowResend(true);
         return;
       }
 
-      toast.error(msg || "Login Failed");
+      toast.error(error?.message || "Invalid email or password ❌");
     }
   };
 
   const handleChange = (e) => {
-  setFormData({ 
-    ...formData, 
-    [e.target.name]: e.target.value 
-  });
-};
-
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleResendLink = async () => {
     if (!formData.email) return toast.error("Enter your email first.");
@@ -57,7 +54,7 @@ const Login = () => {
     setSending(true);
 
     try {
-      await authApi.resendVerification(formData.email); // FIXED
+      await authApi.resendVerification(formData.email);
       toast.success("Verification email sent again 📧");
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to resend");

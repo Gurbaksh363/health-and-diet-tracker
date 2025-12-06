@@ -1,0 +1,15 @@
+headers {
+  Cookie: session_token={{session_token}}
+}
+
+auth {
+  mode: bearer
+}
+
+auth:bearer {
+  token: {{acess_token}}
+}
+
+vars:post-response {
+  : 
+}

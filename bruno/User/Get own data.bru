@@ -1,0 +1,16 @@
+meta {
+  name: Get own data
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{url}}/v1/user/profile
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

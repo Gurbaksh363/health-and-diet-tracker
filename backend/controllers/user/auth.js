@@ -109,6 +109,9 @@ const verifyEmail = async (req, res, next) => {
             const sessionToken = jwt.sign({ userId: user._id }, config.JWT_SECRET, { expiresIn: "30d" });
             accessToken = jwt.sign({ userId: user._id }, config.JWT_SECRET, { expiresIn: "10m" });
 
+            // Store session in Redis (30 days)
+            await redisClient.setex(`session:${user._id}`, 30 * 24 * 60 * 60, "active");
+
             res.cookie("session_token", sessionToken, {
                 httpOnly: true,
                 secure: config.NODE_ENV === "production",
@@ -191,6 +194,9 @@ const login = async (req, res, next) => {
 
         const sessionToken = jwt.sign({ userId: user._id }, config.JWT_SECRET, { expiresIn: "30d" });
         const accessToken = jwt.sign({ userId: user._id }, config.JWT_SECRET, { expiresIn: "10m" });
+
+        // Store session in Redis (30 days)
+        await redisClient.setex(`session:${user._id}`, 30 * 24 * 60 * 60, "active");
 
         res.cookie("session_token", sessionToken, {
             httpOnly: true,
@@ -306,11 +312,71 @@ const resetPassword = async (req, res, next) => {
     }
 };
 
+const logout = async (req, res, next) => {
+    try {
+        // Delete session from Redis if user is authenticated
+
+        await redisClient.del(`session:${req.user._id}`);
+
+
+        res.clearCookie("session_token", {
+            httpOnly: true,
+            secure: config.NODE_ENV === "production",
+            sameSite: "Strict",
+        });
+        await redisClient.del(`session:${req.userId}`);
+
+        res.status(200).json({
+            success: true,
+            message: "Logout successful",
+        });
+    } catch (error) {
+        next(new ApiError(500, "Error logging out", "LOGOUT_ERROR", error.message));
+    }
+};
+
+const refreshToken = async (req, res, next) => {
+    try {
+        const sessionToken = req.cookies.session_token;
+
+        if (!sessionToken) {
+            return next(new ApiError(401, "No session token provided", "UNAUTHORIZED", "User is not logged in"));
+        }
+
+        let decoded;
+
+
+        try {
+            decoded = jwt.verify(sessionToken, config.JWT_SECRET);
+        } catch (err) {
+            return next(new ApiError(401, "Invalid session token", "UNAUTHORIZED", "Session token is invalid or expired"));
+        }
+
+        const session = await redisClient.get(`session:${decoded.userId}`);
+        // console.log(session)
+        if (!session) {
+            throw new ApiError(401, "Session expired. Please log in again.", "SESSION_EXPIRED", "No active session found for the user");
+        }
+
+        const accessToken = jwt.sign({ userId: decoded.userId }, config.JWT_SECRET, { expiresIn: "10m" });
+
+        res.status(200).json({
+            success: true,
+            message: "Token refreshed successfully",
+            token: accessToken,
+        });
+    } catch (error) {
+        next(new ApiError(500, "Error refreshing token", "TOKEN_ERROR", error.message));
+    }
+};
+
 export {
     register,
     verifyEmail,
     resendVerificationEmail,
     login,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    logout,
+    refreshToken,
 };
