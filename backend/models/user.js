@@ -49,9 +49,9 @@ const userSchema = new Schema({
     medicalConditions: {
         type: [String],
     },
-    targetWeight: {
-        type: Number,
-    },
+    // targetWeight: {
+    //     type: Number,
+    // },
 
     // Dietary preferences
     dietaryPreferences: {
@@ -74,9 +74,7 @@ const userSchema = new Schema({
     sleepGoal: {
         type: Number,
     },
-    // stepsGoal: {
-    //     type: Number,
-    // },
+
 
     // Fitness and activity goals
     goals: {

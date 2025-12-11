@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { User, UserRound, Users, Check } from 'lucide-react';
+import { useOnboarding } from '@/context/OnboardingContext';
 
-const GenderScreen = ({ onNext, onBack, initialValue = '' }) => {
-    const [gender, setGender] = useState(initialValue);
+const GenderScreen = ({ onNext, onBack}) => {
+    const {form, updateForm} = useOnboarding();
+    const [gender, setGender] = useState(form.gender || "");
 
     const genderOptions = [
         { value: 'male', label: 'Male', icon: User, color: 'text-blue-500', bgColor: 'bg-blue-500/20' },
@@ -12,7 +14,8 @@ const GenderScreen = ({ onNext, onBack, initialValue = '' }) => {
 
     const handleNext = () => {
         if (!gender) return;
-        onNext({ gender });
+        updateForm({ gender });
+        onNext();
     };
 
     return (

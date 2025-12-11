@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Cake } from 'lucide-react';
+import { useOnboarding } from '@/context/OnboardingContext';
 
-const AgeScreen = ({ onNext, onBack, initialValue = '' }) => {
-    const [age, setAge] = useState(initialValue);
+const AgeScreen = ({ onNext, onBack }) => {
+    const {form, updateForm} = useOnboarding();
+    const [age, setAge] = useState(form.age || "");
     const [error, setError] = useState('');
 
     const handleNext = () => {
@@ -12,7 +14,8 @@ const AgeScreen = ({ onNext, onBack, initialValue = '' }) => {
             return;
         }
         setError('');
-        onNext({ age: ageNum });
+        updateForm({ age: ageNum });
+        onNext();
     };
 
     const handleKeyPress = (e) => {

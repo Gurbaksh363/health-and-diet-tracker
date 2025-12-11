@@ -1,17 +1,19 @@
 import { useState } from 'react';
 import { Ruler } from 'lucide-react';
+import { useOnboarding } from '@/context/OnboardingContext';
 
-const HeightScreen = ({ onNext, onBack, initialValue = { value: '', unit: 'cm' } }) => {
-    const [height, setHeight] = useState(initialValue.value);
-    const [unit, setUnit] = useState(initialValue.unit);
-    const [feet, setFeet] = useState('');
-    const [inches, setInches] = useState('');
+const HeightScreen = ({ onNext, onBack }) => {
+    const { form, updateForm } = useOnboarding();
+    const [height, setHeight] = useState(form.height || "");
+    const [unit, setUnit] = useState(form.heightUnit || "cm");
+    const [feet, setFeet] = useState(form.feet || "");
+    const [inches, setInches] = useState(form.inches || "");
     const [error, setError] = useState('');
 
     const handleNext = () => {
         let heightInCm;
 
-        if (unit === 'cm') {
+        if (unit === 'cm') {    
             const heightNum = parseInt(height);
             if (!height || heightNum < 100 || heightNum > 250) {
                 setError('Please enter a valid height between 100-250 cm');
@@ -33,7 +35,13 @@ const HeightScreen = ({ onNext, onBack, initialValue = { value: '', unit: 'cm' }
         }
 
         setError('');
-        onNext({ height: heightInCm, heightUnit: unit });
+        updateForm({
+            height: heightInCm,
+            heightUnit: unit,
+            feet,
+            inches
+        });
+        onNext();
     };
 
     const handleUnitToggle = (newUnit) => {

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PartyPopper, Target, Droplets, MoonStar, Footprints, Sparkles, FileText, TrendingUp, Trophy, Rocket } from 'lucide-react';
 
-const CompletionScreen = ({ userData }) => {
+const CompletionScreen = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -61,23 +61,19 @@ const CompletionScreen = ({ userData }) => {
                         <div className="bg-linear-to-br from-primary/20 to-primary/10 p-4 rounded-xl">
                             <Target className="w-8 h-8 text-primary mb-1 mx-auto" strokeWidth={2} />
                             <p className="text-sm text-text-secondary">Target Weight</p>
-                            <p className="text-lg font-bold text-text">{userData.targetWeight || userData.weight} kg</p>
+                            {/* <p className="text-lg font-bold text-text">{userData.targetWeight || userData.weight} kg</p> */}
                         </div>
                         <div className="bg-linear-to-br from-accent/20 to-accent/10 p-4 rounded-xl">
                             <Droplets className="w-8 h-8 text-blue-500 mb-1 mx-auto" strokeWidth={2} />
                             <p className="text-sm text-text-secondary">Water Goal</p>
-                            <p className="text-lg font-bold text-text">{userData.waterIntakeGoal} ml</p>
+                            {/* <p className="text-lg font-bold text-text">{userData.waterIntakeGoal} ml</p> */}
                         </div>
                         <div className="bg-linear-to-br from-secondary/20 to-secondary/10 p-4 rounded-xl">
                             <MoonStar className="w-8 h-8 text-indigo-500 mb-1 mx-auto" strokeWidth={2} />
                             <p className="text-sm text-text-secondary">Sleep Goal</p>
-                            <p className="text-lg font-bold text-text">{userData.sleepGoal}h</p>
+                            {/* <p className="text-lg font-bold text-text">{userData.sleepGoal}h</p> */}
                         </div>
-                        <div className="bg-linear-to-br from-info/20 to-info/10 p-4 rounded-xl">
-                            <Footprints className="w-8 h-8 text-green-500 mb-1 mx-auto" strokeWidth={2} />
-                            <p className="text-sm text-text-secondary">Steps Goal</p>
-                            <p className="text-lg font-bold text-text">{userData.stepsGoal}</p>
-                        </div>
+
                     </div>
 
                     <div className="bg-accent/10 border border-accent/30 rounded-lg p-4">

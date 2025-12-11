@@ -1,4 +1,3 @@
-
 import ApiError from "../../middleware/error-handler.js";
 import User from "../../models/user.js";
 
@@ -10,6 +9,7 @@ const OnboardUser = async (req, res, next) => {
             weight,
             gender,
             dietaryPreferences,
+            medicalConditions,
             waterIntakeGoal,
             sleepGoal,
             goals
@@ -32,8 +32,12 @@ const OnboardUser = async (req, res, next) => {
         }
         if (age) user.age = age;
         if (height) user.height = height;
-        if (weight) user.weight = weight
+        if (weight) user.weight = weight;
         if (gender) user.gender = gender;
+
+        if (medicalConditions) {
+            user.medicalConditions = medicalConditions;
+        }
 
         if (dietaryPreferences) {
             user.dietaryPreferences.dietType = dietaryPreferences.dietType || user.dietaryPreferences.dietType;
@@ -49,6 +53,7 @@ const OnboardUser = async (req, res, next) => {
             user.goals.activityLevel = goals.activityLevel || user.goals.activityLevel;
             user.goals.calorieGoal = goals.calorieGoal || user.goals.calorieGoal;
         }
+        user.hasCompletedOnboarding = true;
 
         await user.save();
 
@@ -58,9 +63,6 @@ const OnboardUser = async (req, res, next) => {
             message: 'User onboarding completed successfully',
             data: user
         });
-
-        // TODO: Add logic to create default plans based on user preferences
-
 
     } catch (err) {
         if (err instanceof ApiError) {

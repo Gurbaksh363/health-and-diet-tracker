@@ -26,6 +26,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import { useAuth } from "./context/AuthContext";
 import { Navigate } from "react-router-dom";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import OnboardingRoute from "./routes/OnboardingRoute";
 
 // Component to handle scroll reset on route change
 function ScrollToTop() {
@@ -71,7 +72,14 @@ function App() {
               
               <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-              <Route path="/onboarding" element={<Onboarding />} />
+              <Route 
+                path="/onboarding" 
+                element={
+                  <OnboardingRoute>
+                    <Onboarding /> 
+                  </OnboardingRoute>
+                } 
+              />
               <Route path="/reset-password" element={ <ResetPasswordPage />} />
 
               {/* EXAMPLE PROTECTED ROUTE */}

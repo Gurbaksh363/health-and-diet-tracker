@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Hospital, Syringe, Heart, HeartPulse, Flower2, Wind, Bone, TrendingUp, Ban, Stethoscope, Check, Lock, Lightbulb } from 'lucide-react';
+import { useOnboarding } from '@/context/OnboardingContext';
 
-const MedicalConditionsScreen = ({ onNext, onBack, onSkip, initialValue = [] }) => {
-    const [selectedConditions, setSelectedConditions] = useState(initialValue);
+const MedicalConditionsScreen = ({ onNext, onBack}) => {
+    const { form, updateForm } = useOnboarding();
+    const [selectedConditions, setSelectedConditions] = useState(form.medicalConditions);
 
     const conditions = [
         { value: 'diabetes', label: 'Diabetes', icon: Syringe, color: 'text-blue-500' },
@@ -26,7 +28,8 @@ const MedicalConditionsScreen = ({ onNext, onBack, onSkip, initialValue = [] }) 
     };
 
     const handleNext = () => {
-        onNext({ medicalConditions: selectedConditions });
+        updateForm({ medicalConditions: selectedConditions });
+        onNext();
     };
 
     return (
@@ -64,7 +67,7 @@ const MedicalConditionsScreen = ({ onNext, onBack, onSkip, initialValue = [] }) 
 
                     {/* Subtitle */}
                     <p className="text-text-secondary text-center mb-8">
-                        This helps us provide safer, more personalized recommendations
+                        This helps us provide safer, more personalized recommendations, Press Continue if you dont have any medical related problems.
                     </p>
 
                     {/* Conditions Grid */}
@@ -118,12 +121,6 @@ const MedicalConditionsScreen = ({ onNext, onBack, onSkip, initialValue = [] }) 
                             className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition hover:scale-[1.02] active:scale-[0.98]"
                         >
                             Back
-                        </button>
-                        <button
-                            onClick={onSkip}
-                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface transition hover:scale-[1.02] active:scale-[0.98]"
-                        >
-                            Skip
                         </button>
                         <button
                             onClick={handleNext}

@@ -14,6 +14,7 @@ export function AuthProvider({ children }) {
     try {
       const res = await authApi.getMe();
       dispatch({ type: "FETCH_SUCCESS", payload: res.data.data });
+      console.log(res.data.data);
     } catch {
       dispatch({ type: "ERROR", payload: null });
     }
@@ -42,11 +43,8 @@ export function AuthProvider({ children }) {
 
     try {
       const res = await authApi.login(credentials);
-
       dispatch({ type: "LOGIN_SUCCESS", payload: res.data.data?.user });
-
       setAccessToken(res.data.token);
-
       return res.data;
     } catch (err) {
       setAccessToken(null);

@@ -1,8 +1,12 @@
 import { useState } from 'react';
 import { Armchair, PersonStanding, Activity, Dumbbell, Zap, Check, Lightbulb } from 'lucide-react';
+import { useOnboarding } from '@/context/OnboardingContext';
 
-const ActivityLevelScreen = ({ onNext, onBack, initialValue = '' }) => {
-    const [activityLevel, setActivityLevel] = useState(initialValue);
+const ActivityLevelScreen = ({ onNext, onBack }) => {
+    const { form, updateForm } = useOnboarding();
+    const [activityLevel, setActivityLevel] = useState(
+        form?.goals?.activityLevel || ""
+    );
 
     const activityOptions = [
         {
@@ -53,11 +57,17 @@ const ActivityLevelScreen = ({ onNext, onBack, initialValue = '' }) => {
     ];
 
     const handleNext = () => {
-        if (!activityLevel) return;
-        onNext({ 
-            goals: { activityLevel }
+        if(!activityLevel) return;
+
+        updateForm({
+            goals: {
+                ...form.goals,
+                activityLevel: activityLevel
+            }
         });
-    };
+
+        onNext();
+    }
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-primary/5 via-bg to-accent/5 px-4 py-8">
@@ -95,7 +105,7 @@ const ActivityLevelScreen = ({ onNext, onBack, initialValue = '' }) => {
                                     onClick={() => setActivityLevel(option.value)}
                                     className={`w-full p-4 rounded-xl border-2 transition-all text-left hover:scale-[1.01] active:scale-[0.99] animate-fade-in ${
                                         activityLevel === option.value
-                                            ? 'border-primary bg-primary/10 shadow-lg'
+                                            ? 'border-primary bg-primary/10 ring-2 ring-primary/40'
                                             : 'border-border bg-bg hover:border-primary/50'
                                     }`}
                                     style={{ animationDelay: `${index * 100}ms` }}

@@ -20,11 +20,19 @@ import {
     Sprout,
     Soup
 } from 'lucide-react';
+import { useOnboarding } from '@/context/OnboardingContext';
 
-const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) => {
-    const [dietType, setDietType] = useState(initialValue.dietType || '');
-    const [allergies, setAllergies] = useState(initialValue.allergies || []);
-    const [dislikes, setDislikes] = useState(initialValue.dislikes || []);
+const DietPreferencesScreen = ({ onNext, onBack}) => {
+    const { form, updateForm } = useOnboarding();
+    const [dietType, setDietType] = useState(
+        form?.dietaryPreferences?.dietType || ""
+    );
+    const [allergies, setAllergies] = useState(
+        form?.dietaryPreferences?.allergies || []
+    );
+    const [dislikes, setDislikes] = useState(
+        form?.dietaryPreferences?.dislikes || []
+    );
 
     const dietTypes = [
         { value: 'vegetarian', label: 'Vegetarian', icon: Salad, color: 'text-green-600', description: 'No meat or fish' },
@@ -75,13 +83,14 @@ const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) =>
     };
 
     const handleNext = () => {
-        onNext({ 
+        updateForm ({
             dietaryPreferences: {
                 dietType,
                 allergies,
                 dislikes
             }
         });
+        onNext();
     };
 
     return (
@@ -205,8 +214,8 @@ const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) =>
                                         onClick={() => toggleDislike(dislike.value)}
                                         className={`relative p-3 rounded-xl border-2 transition-all hover:scale-105 active:scale-95 animate-fade-in ${
                                             dislikes.includes(dislike.value)
-                                                ? 'border-secondary bg-secondary/10 shadow-md'
-                                                : 'border-border bg-bg hover:border-secondary/50'
+                                                ? 'border-red-500 bg-red-50 shadow-md'
+                                                : 'border-border bg-bg hover:border-red-300'
                                         }`}
                                         style={{ animationDelay: `${500 + index * 50}ms` }}
                                     >
@@ -217,7 +226,7 @@ const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) =>
                                             {dislike.label}
                                         </p>
                                         {dislikes.includes(dislike.value) && (
-                                            <div className="absolute top-2 right-2 bg-secondary text-white rounded-full w-5 h-5 flex items-center justify-center animate-scale-in">
+                                            <div className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center animate-scale-in">
                                                 <Check className="w-3 h-3" />
                                             </div>
                                         )}
@@ -244,14 +253,13 @@ const DietPreferencesScreen = ({ onNext, onBack, onSkip, initialValue = {} }) =>
                             Back
                         </button>
                         <button
-                            onClick={onSkip}
-                            className="flex-1 py-3 bg-bg border-2 border-border text-text rounded-lg font-semibold hover:bg-surface hover:scale-[1.02] active:scale-98 transition-all"
-                        >
-                            Skip
-                        </button>
-                        <button
                             onClick={handleNext}
-                            className="flex-2 py-3 bg-primary text-white rounded-lg font-semibold shadow-md hover:shadow-lg hover:bg-primary/90 hover:scale-[1.02] active:scale-98 transition-all"
+                            disabled={!dietType}
+                            className={`flex-2 py-3 rounded-lg font-semibold shadow-md transition ${
+                            dietType
+                                ? 'bg-primary text-white hover:shadow-lg hover:bg-primary/90 hover:scale-[1.02] active:scale-98'
+                                : 'bg-border text-text-secondary cursor-not-allowed'
+                        }`}
                         >
                             Continue
                         </button>

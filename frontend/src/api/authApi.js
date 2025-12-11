@@ -12,7 +12,10 @@ const authApi = {
   refresh: () => axiosClient.post("/user/auth/refresh-token"),
   logout: () => axiosClient.post("/user/auth/logout"),
 
-  getMe: () => axiosClient.get("/user/profile"), 
+  getMe: () => axiosClient.get("/user/profile"),
+  
+  onboarding: (payload) => axiosClient.post("/user/profile/onboard", payload),
+
 };
 
 export default authApi;

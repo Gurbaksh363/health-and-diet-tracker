@@ -1,45 +1,25 @@
 import { useState } from 'react';
 import { Scale } from 'lucide-react';
+import { useOnboarding } from '@/context/OnboardingContext';
 
-const WeightScreen = ({ onNext, onBack, initialValue = { value: '', unit: 'kg' } }) => {
-    const [weight, setWeight] = useState(initialValue.value);
-    const [unit, setUnit] = useState(initialValue.unit);
+const WeightScreen = ({ onNext, onBack}) => {
+    const { form, updateForm } = useOnboarding();
+    const [weight, setWeight] = useState(form.weight || "");
     const [error, setError] = useState('');
 
     const handleNext = () => {
         const weightNum = parseFloat(weight);
         
-        if (unit === 'kg') {
-            if (!weight || weightNum < 30 || weightNum > 300) {
-                setError('Please enter a valid weight between 30-300 kg');
-                return;
-            }
-        } else {
-            if (!weight || weightNum < 66 || weightNum > 660) {
-                setError('Please enter a valid weight between 66-660 lbs');
-                return;
-            }
+        if (!weight || weightNum < 30 || weightNum > 300) {
+            setError('Please enter a valid weight between 30-300 kg');
+            return;
         }
 
-        const weightInKg = unit === 'kg' ? weightNum : Math.round(weightNum / 2.205);
-        
         setError('');
-        onNext({ weight: weightInKg, weightUnit: unit });
+        updateForm({ weight: weightNum });
+        onNext();
     };
 
-    const handleUnitToggle = (newUnit) => {
-        // Convert the current weight when switching units
-        if (weight) {
-            const weightNum = parseFloat(weight);
-            if (unit === 'kg' && newUnit === 'lbs') {
-                setWeight((weightNum * 2.205).toFixed(1));
-            } else if (unit === 'lbs' && newUnit === 'kg') {
-                setWeight((weightNum / 2.205).toFixed(1));
-            }
-        }
-        setUnit(newUnit);
-        setError('');
-    };
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-br from-primary/5 via-bg to-accent/5 px-4">
@@ -75,24 +55,9 @@ const WeightScreen = ({ onNext, onBack, initialValue = { value: '', unit: 'kg' }
                     {/* Unit Toggle */}
                     <div className="flex bg-bg rounded-lg p-1 mb-6">
                         <button
-                            onClick={() => handleUnitToggle('kg')}
-                            className={`flex-1 py-2 rounded-md font-semibold transition ${
-                                unit === 'kg'
-                                    ? 'bg-primary text-white shadow-md'
-                                    : 'text-text-secondary hover:text-text'
-                            }`}
+                            className={`flex-1 py-2 rounded-md font-semibold transition`}
                         >
                             Kilograms
-                        </button>
-                        <button
-                            onClick={() => handleUnitToggle('lbs')}
-                            className={`flex-1 py-2 rounded-md font-semibold transition ${
-                                unit === 'lbs'
-                                    ? 'bg-primary text-white shadow-md'
-                                    : 'text-text-secondary hover:text-text'
-                            }`}
-                        >
-                            Pounds
                         </button>
                     </div>
 
@@ -103,16 +68,16 @@ const WeightScreen = ({ onNext, onBack, initialValue = { value: '', unit: 'kg' }
                                 type="number"
                                 value={weight}
                                 onChange={(e) => setWeight(e.target.value)}
-                                placeholder={unit === 'kg' ? '70' : '154'}
+                                placeholder={'70'}
                                 autoFocus
                                 step="0.1"
-                                min={unit === 'kg' ? '30' : '66'}
-                                max={unit === 'kg' ? '300' : '660'}
+                                min={'30'}
+                                max={'300'}
                                 className="w-full px-6 py-4 bg-bg border-2 border-border rounded-xl text-center text-3xl font-semibold text-text focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
                             />
-                            <span className="absolute right-6 top-1/2 -translate-y-1/2 text-2xl text-text-secondary font-semibold">
+                            {/* <span className="absolute right-6 top-1/2 -translate-y-1/2 text-2xl text-text-secondary font-semibold">
                                 {unit}
-                            </span>
+                            </span> */}
                         </div>
                         {error && (
                             <p className="text-red-500 text-sm mt-2 text-center animate-fade-in">
@@ -123,25 +88,15 @@ const WeightScreen = ({ onNext, onBack, initialValue = { value: '', unit: 'kg' }
 
                     {/* Quick Select */}
                     <div className="grid grid-cols-4 gap-2 mb-6">
-                        {unit === 'kg'
-                            ? [60, 70, 80, 90].map((quickWeight) => (
-                                  <button
-                                      key={quickWeight}
-                                      onClick={() => setWeight(quickWeight.toString())}
-                                      className="py-2 bg-bg border border-border rounded-lg text-text hover:bg-primary hover:text-white hover:border-primary transition"
-                                  >
-                                      {quickWeight}
-                                  </button>
-                              ))
-                            : [130, 154, 176, 198].map((quickWeight) => (
-                                  <button
-                                      key={quickWeight}
-                                      onClick={() => setWeight(quickWeight.toString())}
-                                      className="py-2 bg-bg border border-border rounded-lg text-text hover:bg-primary hover:text-white hover:border-primary transition text-sm"
-                                  >
-                                      {quickWeight}
-                                  </button>
-                              ))}
+                        {[60, 70, 80, 90].map((quickWeight) => (
+                            <button
+                                key={quickWeight}
+                                onClick={() => setWeight(quickWeight.toString())}
+                                className="py-2 bg-bg border border-border rounded-lg text-text hover:bg-primary hover:text-white hover:border-primary transition"
+                            >
+                                {quickWeight}
+                            </button>
+                        ))}
                     </div>
 
                     {/* Navigation Buttons */}
