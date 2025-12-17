@@ -4,8 +4,6 @@ import User from "../models/user.js";
 import redisClient from "../config/redis.js";
 
 export const authenticate = async (req, res, next) => {
-    console.log("HEADERS:", req.headers);
-    console.log("COOKIES", res.cookies);
     try {
         let token = null;
         let isSessionToken = false;
