@@ -200,8 +200,8 @@ const login = async (req, res, next) => {
 
         res.cookie("session_token", sessionToken, {
             httpOnly: true,
-            secure: false,
-            sameSite: "none",
+            secure: config.NODE_ENV === "production",
+            sameSite: "Strict",
             maxAge: 30 * 24 * 60 * 60 * 1000,
         });
 
