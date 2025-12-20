@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
     Zap, 
     Footprints, 
@@ -18,71 +18,174 @@ import {
     Heart,
     Trophy,
     Target,
-    TrendingUp
+    TrendingUp,
+    Loader
 } from 'lucide-react';
+import { toast } from 'sonner';
+import workoutApi from '@/api/workoutApi';
 
 const WorkoutsTab = () => {
+    const navigate = useNavigate();
     const [selectedView, setSelectedView] = useState('today'); // today, week, month
+    const [selectedFilter, setSelectedFilter] = useState('all'); // all, cardio, strength, flexibility, sports
+    const [todaysWorkouts, setTodaysWorkouts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [weeklyStats, setWeeklyStats] = useState(null);
 
-    // Mock data - replace with actual data from backend
+    useEffect(() => {
+        fetchTodaysWorkouts();
+        fetchWeeklyStats();
+    }, []);
+
+    const [weeklyWorkouts, setWeeklyWorkouts] = useState([]);
+
+    useEffect(() => {
+        if (selectedView === 'week') {
+            fetchWeeklyWorkouts();
+        } else {
+            fetchTodaysWorkouts();
+        }
+    }, [selectedView]);
+
+    const fetchTodaysWorkouts = async () => {
+        try {
+            setLoading(true);
+            const today = new Date().toISOString().split('T')[0];
+                const response = await workoutApi.getWorkoutByDate(today);
+                // workoutApi returns response.data shape: { success, data: { workouts, totals } }
+                const workouts = response?.data?.workouts || response?.data?.data?.workouts || [];
+                setTodaysWorkouts(workouts);
+        } catch (error) {
+            console.error('Failed to load workouts:', error);
+            toast.error('Failed to load workouts');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchWeeklyStats = async () => {
+        try {
+            const response = await workoutApi.getWeeklyStats();
+            setWeeklyStats(response.data);
+        } catch (error) {
+            console.error('Failed to load weekly stats:', error);
+        }
+    };
+
+    const fetchWeeklyWorkouts = async () => {
+        try {
+            setLoading(true);
+            const end = new Date();
+            const start = new Date();
+            start.setDate(end.getDate() - 6);
+            const startDate = start.toISOString().split('T')[0];
+            const endDate = end.toISOString().split('T')[0];
+                const response = await workoutApi.getWorkoutRange(startDate, endDate);
+                const workouts = response?.data?.workouts || response?.data?.data?.workouts || [];
+                setWeeklyWorkouts(workouts);
+        } catch (error) {
+            console.error('Failed to load weekly workouts:', error);
+            toast.error('Failed to load weekly workouts');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDeleteWorkout = async (workoutId) => {
+        if (!window.confirm('Are you sure you want to delete this workout?')) {
+            return;
+        }
+
+        try {
+            await workoutApi.deleteWorkout(workoutId);
+            toast.success('Workout deleted');
+            if (selectedView === 'week') {
+                fetchWeeklyWorkouts();
+            } else {
+                fetchTodaysWorkouts();
+            }
+        } catch (error) {
+            toast.error('Failed to delete workout');
+        }
+    };
+
+    const handleEditWorkout = (workout) => {
+        navigate('/workouts/add', { state: { workout, mode: 'edit' } });
+    };
+
+    // Derive current dataset and metrics
+    const currentWorkouts = selectedView === 'week' ? weeklyWorkouts : todaysWorkouts;
+    const burnedCalories = currentWorkouts.reduce((sum, workout) => sum + (workout.calories || 0), 0);
+    const targetSteps = 10000;
+    const distanceTargetKm = 10;
     const userData = {
         targetCalories: 1780,
         consumedCalories: 1245,
-        burnedCalories: 420,
-        netCalories: 825, // consumed - burned
+        burnedCalories,
+        netCalories: 1245 - burnedCalories,
         targetBurn: 500,
-        steps: 8234,
-        targetSteps: 10000,
-        activeMinutes: 45,
+        activeMinutes: currentWorkouts.reduce((sum, workout) => sum + (workout.duration || 0), 0),
         targetActiveMinutes: 60,
-        distance: 6.2, // km
     };
 
-    const todaysWorkouts = [
-        {
-            id: 1,
-            name: 'Morning Run',
-            type: 'cardio',
-            duration: 30,
-            calories: 280,
-            time: '07:00',
-            intensity: 'moderate',
-            source: 'manual',
-        },
-        {
-            id: 2,
-            name: 'Weight Training',
-            type: 'strength',
-            duration: 45,
-            calories: 140,
-            time: '18:30',
-            intensity: 'high',
-            source: 'manual',
-        },
-    ];
-
-    const quickAddExercises = [
-        { name: 'Running', icon: PersonStanding, type: 'cardio', avgCalPerMin: 9, color: 'text-accent' },
-        { name: 'Walking', icon: Footprints, type: 'cardio', avgCalPerMin: 4, color: 'text-blue-500' },
-        { name: 'Cycling', icon: Bike, type: 'cardio', avgCalPerMin: 8, color: 'text-green-500' },
-        { name: 'Swimming', icon: Waves, type: 'cardio', avgCalPerMin: 10, color: 'text-cyan-500' },
-        { name: 'Weights', icon: Dumbbell, type: 'strength', avgCalPerMin: 3, color: 'text-purple-500' },
-        { name: 'Yoga', icon: Sparkles, type: 'flexibility', avgCalPerMin: 2.5, color: 'text-pink-500' },
-    ];
+    // Calculate workout counts by type
+    const workoutCounts = currentWorkouts.reduce((acc, workout) => {
+        acc[workout.type] = (acc[workout.type] || 0) + 1;
+        return acc;
+    }, {});
 
     const activityTypes = [
-        { name: 'Cardio', icon: Heart, color: 'text-accent', count: 1 },
-        { name: 'Strength', icon: Dumbbell, color: 'text-primary', count: 1 },
-        { name: 'Flexibility', icon: Sparkles, color: 'text-secondary', count: 0 },
-        { name: 'Sports', icon: Trophy, color: 'text-info', count: 0 },
+        { name: 'Cardio', value: 'cardio', icon: Heart, color: 'text-accent', count: workoutCounts.cardio || 0 },
+        { name: 'Strength', value: 'strength', icon: Dumbbell, color: 'text-primary', count: workoutCounts.strength || 0 },
+        { name: 'Flexibility', value: 'flexibility', icon: Sparkles, color: 'text-secondary', count: workoutCounts.flexibility || 0 },
+        { name: 'Sports', value: 'sports', icon: Trophy, color: 'text-info', count: workoutCounts.sports || 0 },
     ];
 
+    const formatWorkoutDate = (date) => {
+        if (!date) return '';
+        return new Date(date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+    };
+
+    // Calculate max calories and average duration
+    const maxCalories = currentWorkouts.length > 0 
+        ? Math.max(...currentWorkouts.map(w => w.calories || 0))
+        : 0;
+    const avgDuration = currentWorkouts.length > 0
+        ? Math.round(currentWorkouts.reduce((sum, w) => sum + (w.duration || 0), 0) / currentWorkouts.length)
+        : 0;
+
+    const maxCaloriesTarget = 600;
+    const avgDurationTarget = 45;
+    const maxCaloriesProgress = (maxCalories / maxCaloriesTarget) * 100;
+    const avgDurationProgress = (avgDuration / avgDurationTarget) * 100;
+
     const burnProgress = (userData.burnedCalories / userData.targetBurn) * 100;
-    const stepsProgress = (userData.steps / userData.targetSteps) * 100;
     const activeMinutesProgress = (userData.activeMinutes / userData.targetActiveMinutes) * 100;
+
+    // Filter workouts based on selected type
+    const filteredWorkouts = selectedFilter === 'all' 
+        ? currentWorkouts 
+        : currentWorkouts.filter(workout => workout.type === selectedFilter);
+
+    const quickAddExercises = [
+        { name: 'Running', icon: PersonStanding, type: 'cardio', avgCalPerMin: 9, color: 'text-accent', suggestedDuration: 30 },
+        { name: 'Walking', icon: Footprints, type: 'cardio', avgCalPerMin: 4, color: 'text-blue-500', suggestedDuration: 45 },
+        { name: 'Cycling', icon: Bike, type: 'cardio', avgCalPerMin: 8, color: 'text-green-500', suggestedDuration: 40 },
+        { name: 'Swimming', icon: Waves, type: 'cardio', avgCalPerMin: 10, color: 'text-cyan-500', suggestedDuration: 30 },
+        { name: 'Weights', icon: Dumbbell, type: 'strength', avgCalPerMin: 3, color: 'text-purple-500', suggestedDuration: 45 },
+        { name: 'Yoga', icon: Sparkles, type: 'flexibility', avgCalPerMin: 2.5, color: 'text-pink-500', suggestedDuration: 60 },
+    ];
 
     return (
         <div className="min-h-screen bg-bg pb-20 pt-16">
+            {loading && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50">
+                    <div className="bg-surface rounded-2xl p-8 flex flex-col items-center gap-4">
+                        <Loader className="w-12 h-12 animate-spin text-primary" />
+                        <p className="text-text font-medium">Loading workouts...</p>
+                    </div>
+                </div>
+            )}
             {/* Header */}
             <div className="bg-gradient-to-r from-accent to-primary text-white px-4 pt-6 pb-8">
                 <div className="max-w-6xl mx-auto">
@@ -131,7 +234,7 @@ const WorkoutsTab = () => {
             {/* Activity Rings */}
             <div className="max-w-6xl mx-auto px-4 -mt-6">
                 <div className="grid grid-cols-3 gap-3 mb-6">
-                    {/* Steps Ring */}
+                    {/* Max Calories */}
                     <div className="bg-surface rounded-xl p-4 shadow-lg text-center animate-fade-in">
                         <div className="relative w-20 h-20 mx-auto mb-2">
                             <svg className="transform -rotate-90 w-20 h-20">
@@ -153,15 +256,15 @@ const WorkoutsTab = () => {
                                     fill="none"
                                     strokeLinecap="round"
                                     className="text-accent transition-all duration-1000 ease-out"
-                                    strokeDasharray={`${(stepsProgress / 100) * 201} 999`}
+                                    strokeDasharray={`${(maxCaloriesProgress / 100) * 201} 999`}
                                 />
                             </svg>
                             <div className="absolute inset-0 flex items-center justify-center">
-                                <Footprints className="w-6 h-6 text-accent" />
+                                <Flame className="w-6 h-6 text-accent" />
                             </div>
                         </div>
-                        <p className="text-xl font-bold text-text">{userData.steps.toLocaleString()}</p>
-                        <p className="text-xs text-text-secondary">of {userData.targetSteps.toLocaleString()} steps</p>
+                        <p className="text-xl font-bold text-text">{maxCalories}</p>
+                        <p className="text-xs text-text-secondary">of {maxCaloriesTarget} cal</p>
                     </div>
 
                     {/* Active Minutes Ring */}
@@ -197,7 +300,7 @@ const WorkoutsTab = () => {
                         <p className="text-xs text-text-secondary">of {userData.targetActiveMinutes} min</p>
                     </div>
 
-                    {/* Distance Ring */}
+                    {/* Average Duration */}
                     <div className="bg-surface rounded-xl p-4 shadow-lg text-center animate-fade-in delay-200">
                         <div className="relative w-20 h-20 mx-auto mb-2">
                             <svg className="transform -rotate-90 w-20 h-20">
@@ -219,15 +322,15 @@ const WorkoutsTab = () => {
                                     fill="none"
                                     strokeLinecap="round"
                                     className="text-secondary transition-all duration-1000 ease-out"
-                                    strokeDasharray={`${((userData.distance / 10) * 100 / 100) * 201} 999`}
+                                    strokeDasharray={`${(avgDurationProgress / 100) * 201} 999`}
                                 />
                             </svg>
                             <div className="absolute inset-0 flex items-center justify-center">
-                                <MapPin className="w-6 h-6 text-secondary" />
+                                <Clock className="w-6 h-6 text-secondary" />
                             </div>
                         </div>
-                        <p className="text-xl font-bold text-text">{userData.distance}</p>
-                        <p className="text-xs text-text-secondary">kilometers</p>
+                        <p className="text-xl font-bold text-text">{avgDuration}</p>
+                        <p className="text-xs text-text-secondary">of {avgDurationTarget} min</p>
                     </div>
                 </div>
 
@@ -237,17 +340,33 @@ const WorkoutsTab = () => {
                     <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                         {quickAddExercises.map((exercise, index) => {
                             const IconComponent = exercise.icon;
+                            const handleQuickAdd = () => {
+                                console.log('Quick add clicked:', exercise);
+                                navigate('/workouts/add', { 
+                                    state: { 
+                                        exercise: {
+                                            name: exercise.name,
+                                            type: exercise.type,
+                                            suggestedDuration: exercise.suggestedDuration,
+                                            avgCalPerMin: exercise.avgCalPerMin,
+                                            color: exercise.color
+                                        },
+                                        isQuickAdd: true 
+                                    } 
+                                });
+                            };
                             return (
-                                <Link to="/workouts/add" key={exercise.name} state={{ exercise }}>
-                                    <button
-                                        className="w-full bg-surface hover:bg-primary/10 rounded-xl p-4 text-center transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 hover:-translate-y-1 active:scale-95 animate-fade-in"
-                                        style={{ animationDelay: `${index * 50}ms` }}
-                                    >
-                                        <IconComponent className={`w-8 h-8 mx-auto mb-2 ${exercise.color}`} strokeWidth={2} />
-                                        <p className="text-xs font-semibold text-text">{exercise.name}</p>
-                                        <p className="text-xs text-text-secondary">{exercise.avgCalPerMin} cal/min</p>
-                                    </button>
-                                </Link>
+                                <button
+                                    key={exercise.name}
+                                    type="button"
+                                    onClick={handleQuickAdd}
+                                    className="w-full bg-surface hover:bg-primary/10 rounded-xl p-4 text-center transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 hover:-translate-y-1 active:scale-95 animate-fade-in cursor-pointer"
+                                    style={{ animationDelay: `${index * 50}ms` }}
+                                >
+                                    <IconComponent className={`w-8 h-8 mx-auto mb-2 ${exercise.color}`} strokeWidth={2} />
+                                    <p className="text-xs font-semibold text-text">{exercise.name}</p>
+                                    <p className="text-xs text-text-secondary">{exercise.suggestedDuration} min</p>
+                                </button>
                             );
                         })}
                     </div>
@@ -255,22 +374,45 @@ const WorkoutsTab = () => {
 
                 {/* Activity Type Filter */}
                 <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-full font-medium shadow-md whitespace-nowrap">
+                    <button 
+                        onClick={() => setSelectedFilter('all')}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium shadow-md whitespace-nowrap transition ${
+                            selectedFilter === 'all' 
+                                ? 'bg-primary text-white' 
+                                : 'bg-surface text-text hover:bg-primary/10'
+                        }`}
+                    >
                         <Flame className="w-5 h-5" />
                         <span>All Activities</span>
-                        <span className="text-xs px-2 py-0.5 bg-white/20 rounded-full">2</span>
+                        {currentWorkouts.length > 0 && (
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                selectedFilter === 'all' ? 'bg-white/20' : 'bg-primary/10 text-primary'
+                            }`}>
+                                {currentWorkouts.length}
+                            </span>
+                        )}
                     </button>
                     {activityTypes.map((type) => {
                         const IconComponent = type.icon;
+                        const isActive = selectedFilter === type.value;
                         return (
                             <button
                                 key={type.name}
-                                className={`flex items-center gap-2 px-4 py-2 bg-surface hover:bg-primary/10 rounded-full font-medium transition whitespace-nowrap`}
+                                onClick={() => setSelectedFilter(type.value)}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition whitespace-nowrap ${
+                                    isActive 
+                                        ? 'bg-primary text-white shadow-md' 
+                                        : 'bg-surface text-text hover:bg-primary/10'
+                                }`}
                             >
-                                <IconComponent className={`w-5 h-5 ${type.color}`} />
-                                <span className="text-text">{type.name}</span>
+                                <IconComponent className={`w-5 h-5 ${isActive ? 'text-white' : type.color}`} />
+                                <span>{type.name}</span>
                                 {type.count > 0 && (
-                                    <span className="text-xs px-2 py-0.5 bg-primary/10 text-primary rounded-full">{type.count}</span>
+                                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                        isActive ? 'bg-white/20' : 'bg-primary/10 text-primary'
+                                    }`}>
+                                        {type.count}
+                                    </span>
                                 )}
                             </button>
                         );
@@ -280,7 +422,9 @@ const WorkoutsTab = () => {
                 {/* Today's Workouts */}
                 <div className="space-y-4 mb-6">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-bold text-text">Today's Workouts</h3>
+                        <h3 className="text-lg font-bold text-text">
+                            {selectedView === 'week' ? "This Week's Workouts" : "Today's Workouts"}
+                        </h3>
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setSelectedView('today')}
@@ -301,10 +445,10 @@ const WorkoutsTab = () => {
                         </div>
                     </div>
 
-                    {todaysWorkouts.length > 0 ? (
-                        todaysWorkouts.map((workout, index) => (
+                    {filteredWorkouts.length > 0 ? (
+                        filteredWorkouts.map((workout, index) => (
                             <div
-                                key={workout.id}
+                                key={workout._id}
                                 className="bg-surface rounded-2xl p-5 shadow-md hover:shadow-lg transition-all duration-200 group animate-slide-in-left"
                                 style={{ animationDelay: `${index * 100}ms` }}
                             >
@@ -333,13 +477,17 @@ const WorkoutsTab = () => {
                                                     {workout.intensity}
                                                 </span>
                                             </div>
-                                            <p className="text-sm text-text-secondary mb-2">{workout.time}</p>
+                                            <p className="text-sm text-text-secondary mb-2">
+                                                {selectedView === 'week'
+                                                    ? `${formatWorkoutDate(workout.date)}${workout.time ? ` · ${workout.time}` : ''}`
+                                                    : workout.time}
+                                            </p>
                                             <div className="flex items-center gap-4 text-sm">
                                                 <span className="flex items-center gap-1 text-text-secondary">
                                                     <Clock className="w-4 h-4" />
                                                     {workout.duration} min
                                                 </span>
-                                                <span className="flex items-center gap-1 font-semibold text-primary">
+                                                <span className="flex items-center gap-1 font-semibold text-accent">
                                                     <Flame className="w-4 h-4" />
                                                     {workout.calories} cal
                                                 </span>
@@ -347,10 +495,24 @@ const WorkoutsTab = () => {
                                         </div>
                                     </div>
                                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                                        <button className="p-2 hover:bg-primary/10 rounded-lg transition">
+                                        <button 
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleEditWorkout(workout);
+                                            }}
+                                            className="p-2 hover:bg-primary/10 rounded-lg transition"
+                                        >
                                             <Edit2 className="w-4 h-4 text-primary" />
                                         </button>
-                                        <button className="p-2 hover:bg-red-50 rounded-lg transition">
+                                        <button 
+                                            type="button"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteWorkout(workout._id);
+                                            }}
+                                            className="p-2 hover:bg-red-50 rounded-lg transition"
+                                        >
                                             <Trash2 className="w-4 h-4 text-red-500" />
                                         </button>
                                     </div>
@@ -360,19 +522,29 @@ const WorkoutsTab = () => {
                     ) : (
                         <div className="bg-surface rounded-2xl p-12 text-center animate-fade-in">
                             <Target className="w-16 h-16 mx-auto mb-4 text-text-secondary" />
-                            <h3 className="text-xl font-bold text-text mb-2">No workouts logged yet</h3>
-                            <p className="text-text-secondary mb-6">Start tracking your activity to reach your goals!</p>
+                            <h3 className="text-xl font-bold text-text mb-2">
+                                {selectedFilter === 'all' 
+                                    ? (selectedView === 'week' ? 'No workouts logged this week' : 'No workouts logged yet')
+                                    : (selectedView === 'week' ? `No ${selectedFilter} workouts this week` : `No ${selectedFilter} workouts today`)
+                                }
+                            </h3>
+                            <p className="text-text-secondary mb-6">
+                                {selectedFilter === 'all' 
+                                    ? 'Start tracking your activity to reach your goals!'
+                                    : 'Try a different filter or log a new workout!'}
+                            </p>
                         </div>
                     )}
                 </div>
             </div>
 
             {/* Floating Add Button */}
-            <Link to="/workouts/add">
-                <button className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-accent to-primary text-white rounded-full shadow-2xl flex items-center justify-center z-50 hover:scale-110 active:scale-90 transition-transform duration-200">
-                    <Plus className="w-8 h-8" strokeWidth={2.5} />
-                </button>
-            </Link>
+            <button 
+                onClick={() => navigate('/workouts/add')}
+                className="fixed bottom-6 right-6 w-16 h-16 bg-gradient-to-br from-accent to-primary text-white rounded-full shadow-2xl flex items-center justify-center z-50 hover:scale-110 active:scale-90 transition-transform duration-200 cursor-pointer"
+            >
+                <Plus className="w-8 h-8" strokeWidth={2.5} />
+            </button>
         </div>
     );
 };

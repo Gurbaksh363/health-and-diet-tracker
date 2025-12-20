@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
 
   // CHECK SESSION
   const fetchUser = async () => {
-    dispatch({ type: "LOADING" });
+     dispatch({ type: "LOADING" });
     try {
       const res = await authApi.getMe();
       dispatch({ type: "FETCH_SUCCESS", payload: res.data.data });

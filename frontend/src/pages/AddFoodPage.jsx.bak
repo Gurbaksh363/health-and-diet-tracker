@@ -15,8 +15,6 @@ import {
     Apple,
     ScanBarcode
 } from 'lucide-react';
-import { foodApi } from '../api/foodApi';
-import { toast } from 'sonner';
 
 const AddFoodPage = () => {
     const navigate = useNavigate();
@@ -116,37 +114,15 @@ const AddFoodPage = () => {
         return () => clearTimeout(debounce);
     }, [searchQuery]);
 
-    const handleAddFood = async (food) => {
-        try {
-            // Prepare data for backend
-            const foodData = {
-                name: food.name,
-                mealType: selectedMealType,
-                calories: parseFloat(food.calories) || 0,
-                protein: parseFloat(food.protein) || 0,
-                carbs: parseFloat(food.carbs) || 0,
-                fats: parseFloat(food.fats) || 0,
-                servingSize: `${food.quantity}${food.unit}`,
-                quantity: 1,
-                date: new Date().toISOString().split('T')[0],
-                time: new Date().toTimeString().slice(0, 5),
-            };
-
-            const response = await foodApi.addFood(foodData);
-            
-            if (response.success) {
-                toast.success('Food added successfully!');
-                navigate('/nutrition');
-            }
-        } catch (error) {
-            console.error('Error adding food:', error);
-            toast.error(error.response?.data?.message || 'Failed to add food');
-        }
+    const handleAddFood = (food) => {
+        
+        // Add to backend/state
+        navigate('/nutrition');
     };
 
-    const handleCustomFoodSubmit = async (e) => {
+    const handleCustomFoodSubmit = (e) => {
         e.preventDefault();
-        await handleAddFood(customFood);
+        handleAddFood(customFood);
     };
 
     const handleBarcodeSearch = async (barcode) => {

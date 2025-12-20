@@ -19,6 +19,7 @@ const Signup = () => {
     agreeToTerms: false,
   });
 
+  
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 

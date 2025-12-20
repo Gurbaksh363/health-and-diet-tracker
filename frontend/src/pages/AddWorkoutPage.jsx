@@ -1,19 +1,45 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Flame, Smartphone, Activity, Dumbbell, Sparkles, Trophy } from 'lucide-react';
+import { toast } from 'sonner';
+import workoutApi from '@/api/workoutApi';
 
 const AddWorkoutPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const preselectedExercise = location.state?.exercise;
+    const editWorkout = location.state?.workout;
+    const isQuickAdd = location.state?.isQuickAdd;
+    const isEditMode = location.state?.mode === 'edit' && editWorkout;
 
     const [workoutData, setWorkoutData] = useState({
-        name: preselectedExercise?.name || '',
-        type: preselectedExercise?.type || 'cardio',
-        duration: 30,
-        intensity: 'moderate',
-        calories: 0,
+        name: editWorkout?.name || preselectedExercise?.name || '',
+        type: editWorkout?.type || preselectedExercise?.type || 'cardio',
+        duration: editWorkout?.duration || preselectedExercise?.suggestedDuration || 30,
+        intensity: editWorkout?.intensity || 'moderate',
+        calories: editWorkout?.calories || 0,
+        steps: editWorkout?.steps || 0,
+        distance: editWorkout?.distance || 0,
     });
+    const [loading, setLoading] = useState(false);
+    const [manualCalories, setManualCalories] = useState(false);
+    const [manualDistance, setManualDistance] = useState(false);
+
+    useEffect(() => {
+        console.log('AddWorkoutPage mounted with state:', { preselectedExercise, editWorkout, isQuickAdd, isEditMode });
+        console.log('Full location.state:', location.state);
+        
+        // Update form when navigating from quick add
+        if (preselectedExercise && isQuickAdd) {
+            console.log('Applying preselected exercise:', preselectedExercise);
+            setWorkoutData(prev => ({
+                ...prev,
+                name: preselectedExercise.name || '',
+                type: preselectedExercise.type || 'cardio',
+                duration: preselectedExercise.suggestedDuration || 30,
+            }));
+        }
+    }, [preselectedExercise, isQuickAdd]);
 
     const exerciseTypes = [
         { value: 'cardio', label: 'Cardio', icon: Activity, color: 'bg-accent/10 text-accent', iconColor: 'text-accent' },
@@ -42,19 +68,66 @@ const AddWorkoutPage = () => {
         sports: 7,
     };
 
-    // Auto-calculate calories
+    // Auto-calculate calories (only when not in manual mode)
     useEffect(() => {
-        const baseCalories = baseCaloriesPerMinute[workoutData.type] || 5;
-        const intensityMultiplier = intensityLevels.find(i => i.value === workoutData.intensity)?.multiplier || 1;
-        const calculatedCalories = Math.round(baseCalories * workoutData.duration * intensityMultiplier);
-        setWorkoutData(prev => ({ ...prev, calories: calculatedCalories }));
-    }, [workoutData.duration, workoutData.type, workoutData.intensity]);
+        if (!manualCalories) {
+            const baseCalories = baseCaloriesPerMinute[workoutData.type] || 5;
+            const intensityMultiplier = intensityLevels.find(i => i.value === workoutData.intensity)?.multiplier || 1;
+            const calculatedCalories = Math.round(baseCalories * workoutData.duration * intensityMultiplier);
+            setWorkoutData(prev => ({ ...prev, calories: calculatedCalories }));
+        }
+    }, [workoutData.duration, workoutData.type, workoutData.intensity, manualCalories]);
 
-    const handleSubmit = (e) => {
+    // Auto-calculate distance from steps (only when not in manual mode)
+    // Average stride: 0.762 meters, so 1 km = ~1312 steps
+    useEffect(() => {
+        if (!manualDistance && workoutData.steps > 0) {
+            const calculatedDistance = (workoutData.steps * 0.762 / 1000).toFixed(2);
+            setWorkoutData(prev => ({ ...prev, distance: parseFloat(calculatedDistance) }));
+        }
+    }, [workoutData.steps, manualDistance]);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Adding workout:', workoutData);
-        // Add to backend/state
-        navigate('/workouts');
+        
+        if (!workoutData.name.trim()) {
+            toast.error('Please enter an exercise name');
+            return;
+        }
+
+        if (workoutData.calories <= 0) {
+            toast.error('Please enter calories burned');
+            return;
+        }
+
+        setLoading(true);
+        
+        try {
+            const payload = {
+                name: workoutData.name,
+                type: workoutData.type,
+                duration: workoutData.duration,
+                intensity: workoutData.intensity,
+                calories: workoutData.calories,
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })
+            };
+
+            if (isEditMode) {
+                await workoutApi.updateWorkout(editWorkout._id, payload);
+                toast.success('Workout updated successfully! ✏️');
+            } else {
+                await workoutApi.addWorkout(payload);
+                toast.success('Workout logged successfully! 💪');
+            }
+            
+            navigate('/workouts');
+        } catch (error) {
+            const message = error.response?.data?.message || error.message || 'Failed to log workout';
+            toast.error(message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -69,8 +142,10 @@ const AddWorkoutPage = () => {
                         <ArrowLeft className="w-6 h-6" />
                     </button>
                     <div className="flex-1">
-                        <h1 className="text-2xl font-bold">Log Workout</h1>
-                        <p className="text-white/80 text-sm">Track your activity</p>
+                        <h1 className="text-2xl font-bold">{isEditMode ? 'Edit Workout' : 'Log Workout'}</h1>
+                        <p className="text-white/80 text-sm">
+                            {isEditMode ? 'Update your activity' : isQuickAdd ? `Quick add: ${preselectedExercise?.name}` : 'Track your activity'}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -211,67 +286,134 @@ const AddWorkoutPage = () => {
                         </div>
                     </div>
 
-                    {/* Auto-calculated Calories */}
-                    <div className="bg-linear-to-br from-accent/10 to-primary/10 rounded-xl p-4 border-2 border-accent/20">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-text-secondary mb-1">Estimated Calories Burned</p>
-                                <p className="text-3xl font-bold text-accent flex items-baseline gap-2">
-                                    {workoutData.calories}
-                                    <span className="text-sm font-normal text-text-secondary">calories</span>
-                                </p>
-                                <p className="text-xs text-text-secondary mt-1">
-                                    Based on {workoutData.duration} min {workoutData.intensity} intensity {workoutData.type}
-                                </p>
-                            </div>
-                            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                                <Flame className="w-7 h-7 text-orange-500" />
-                            </div>
+                    {/* Steps and Distance Tracking */}
+                    <div className="grid grid-cols-2 gap-4">
+                        {/* Step Count */}
+                        <div>
+                            <label className="block text-sm font-semibold text-text mb-2">Steps (Optional)</label>
+                            <input
+                                type="number"
+                                min="0"
+                                value={workoutData.steps || ''}
+                                onChange={(e) => setWorkoutData({ ...workoutData, steps: parseInt(e.target.value) || 0 })}
+                                placeholder="0"
+                                className="w-full px-4 py-3 bg-bg border-2 border-border rounded-xl focus:border-accent focus:outline-none text-text"
+                            />
+                            <p className="text-xs text-text-secondary mt-1">Track your steps</p>
                         </div>
-                        
-                        {/* Manual Override */}
-                        <div className="mt-3 pt-3 border-t border-accent/20">
-                            <label className="flex items-center gap-2 text-xs text-text-secondary">
-                                <input
-                                    type="checkbox"
-                                    className="rounded accent-accent"
-                                    onChange={(e) => {
-                                        if (e.target.checked) {
-                                            // Allow manual input
-                                        }
-                                    }}
-                                />
-                                Adjust manually
+
+                        {/* Distance */}
+                        <div>
+                            <label className="block text-sm font-semibold text-text mb-2">
+                                Distance (km)
+                                {!manualDistance && workoutData.steps > 0 && (
+                                    <span className="text-xs text-accent ml-2">Auto-calculated</span>
+                                )}
                             </label>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    value={workoutData.distance || ''}
+                                    onChange={(e) => {
+                                        setManualDistance(true);
+                                        setWorkoutData({ ...workoutData, distance: parseFloat(e.target.value) || 0 });
+                                    }}
+                                    placeholder="0.00"
+                                    className="w-full px-4 py-3 bg-bg border-2 border-border rounded-xl focus:border-accent focus:outline-none text-text"
+                                />
+                                {manualDistance && workoutData.steps > 0 && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setManualDistance(false)}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-accent hover:text-primary"
+                                        title="Reset to auto-calculate from steps"
+                                    >
+                                        Auto
+                                    </button>
+                                )}
+                            </div>
+                            <p className="text-xs text-text-secondary mt-1">
+                                {!manualDistance && workoutData.steps > 0 
+                                    ? `~${(workoutData.steps / 1312).toFixed(0)} steps per km`
+                                    : 'Enter distance manually'}
+                            </p>
                         </div>
                     </div>
+
+                    {/* Auto-calculated Calories - Only show when activity name is entered */}
+                    {workoutData.name.trim() && (
+                        <div className="bg-linear-to-br from-accent/10 to-primary/10 rounded-xl p-4 border-2 border-accent/20">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-text-secondary mb-1">
+                                        {manualCalories ? 'Manual Calories Input' : 'Estimated Calories Burned'}
+                                    </p>
+                                    <p className="text-3xl font-bold text-accent flex items-baseline gap-2">
+                                        {workoutData.calories}
+                                        <span className="text-sm font-normal text-text-secondary">calories</span>
+                                    </p>
+                                    <p className="text-xs text-text-secondary mt-1">
+                                        {manualCalories 
+                                            ? 'Manually entered value' 
+                                            : `Based on ${workoutData.duration} min ${workoutData.intensity} intensity ${workoutData.type}`
+                                        }
+                                    </p>
+                                </div>
+                                <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                                    <Flame className="w-7 h-7 text-orange-500" />
+                                </div>
+                            </div>
+                            
+                            {/* Manual Override */}
+                            <div className="mt-3 pt-3 border-t border-accent/20">
+                                <label className="flex items-center gap-2 text-xs text-text-secondary cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={manualCalories}
+                                        className="rounded accent-accent cursor-pointer"
+                                        onChange={(e) => {
+                                            setManualCalories(e.target.checked);
+                                            if (!e.target.checked) {
+                                                // Recalculate when switching back to auto
+                                                const baseCalories = baseCaloriesPerMinute[workoutData.type] || 5;
+                                                const intensityMultiplier = intensityLevels.find(i => i.value === workoutData.intensity)?.multiplier || 1;
+                                                const calculatedCalories = Math.round(baseCalories * workoutData.duration * intensityMultiplier);
+                                                setWorkoutData(prev => ({ ...prev, calories: calculatedCalories }));
+                                            }
+                                        }}
+                                    />
+                                    Adjust manually
+                                </label>
+                                
+                                {manualCalories && (
+                                    <div className="mt-3">
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            max="10000"
+                                            value={workoutData.calories || ''}
+                                            onChange={(e) => setWorkoutData({ ...workoutData, calories: parseInt(e.target.value) || 0 })}
+                                            onFocus={(e) => e.target.select()}
+                                            placeholder="Enter calories"
+                                            className="w-full px-3 py-2 bg-white border-2 border-accent/30 rounded-lg focus:border-accent focus:outline-none text-text text-sm"
+                                            autoFocus
+                                        />
+                                        <p className="text-xs text-text-secondary mt-1">Enter the calories burned manually</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
-                {/* Google Fit Integration Banner */}
-                <div className="bg-surface rounded-xl p-4 mb-6 border-2 border-dashed border-border hover:border-primary transition cursor-pointer animate-fade-in">
-                    <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                            <Smartphone className="w-6 h-6 text-primary" />
-                        </div>
-                        <div className="flex-1">
-                            <h3 className="font-semibold text-text">Connect Google Fit</h3>
-                            <p className="text-xs text-text-secondary">Auto-sync steps, distance & activities</p>
-                        </div>
-                        <button
-                            type="button"
-                            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 transition"
-                        >
-                            Connect
-                        </button>
-                    </div>
-                </div>
-
-                {/* Submit Button */}
                 <button
                     type="submit"
-                    className="w-full py-4 bg-linear-to-r from-accent to-primary text-white font-bold rounded-xl shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-transform"
+                    disabled={loading}
+                    className="w-full py-4 bg-linear-to-r from-accent to-primary text-white font-bold rounded-xl shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Log Workout
+                    {loading ? 'Logging Workout...' : 'Log Workout'}
                 </button>
             </form>
         </div>

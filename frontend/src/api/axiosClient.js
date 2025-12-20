@@ -4,6 +4,7 @@ import authApi from "./authApi";
 // Store access token in memory, not localStorage
 let accessToken = null;
 
+
 export const setAccessToken = (token) => {
   accessToken = token;
 };
