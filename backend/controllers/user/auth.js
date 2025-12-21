@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import { sendVerificationEmail, sendPasswordResetEmail, sendWelcomeEmail } from "../util/email.js";
-import redisClient from "../../config/redis.js";
+import memoryStore from "../../config/redis.js";
 import config from "../../config/index.js";
 
 const register = async (req, res, next) => {
@@ -32,7 +32,7 @@ const register = async (req, res, next) => {
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const verificationToken = crypto.randomBytes(32).toString("hex");
-        await redisClient.setex(`email_verification:${email}`, 10 * 60, verificationToken);
+        await memoryStore.setex(`email_verification:${email}`, 10 * 60, verificationToken);
 
         const newUser = new User({
             name,
@@ -79,8 +79,8 @@ const verifyEmail = async (req, res, next) => {
             return next(new ApiError(400, "Email is required for verification", "VALIDATION_ERROR", 'Must provide an email for verification'));
         }
 
-        // Get token from Redis
-        const storedToken = await redisClient.get(`email_verification:${email}`);
+        // Get token from memory store
+        const storedToken = await memoryStore.get(`email_verification:${email}`);
 
         if (!storedToken || storedToken !== token) {
             return next(new ApiError(400, "Invalid or expired verification token", "INVALID_TOKEN", "The provided verification token is invalid or has expired"));
@@ -95,7 +95,7 @@ const verifyEmail = async (req, res, next) => {
         user.isEmailVerified = true;
         await user.save();
 
-        await redisClient.del(`email_verification:${email}`);
+        await memoryStore.del(`email_verification:${email}`);
 
         try {
             await sendWelcomeEmail(user.email, user.name);
@@ -109,8 +109,8 @@ const verifyEmail = async (req, res, next) => {
             const sessionToken = jwt.sign({ userId: user._id }, config.JWT_SECRET, { expiresIn: "30d" });
             accessToken = jwt.sign({ userId: user._id }, config.JWT_SECRET, { expiresIn: "10m" });
 
-            // Store session in Redis (30 days)
-            await redisClient.setex(`session:${user._id}`, 30 * 24 * 60 * 60, "active");
+            // Store session in memory (30 days)
+            await memoryStore.setex(`session:${user._id}`, 30 * 24 * 60 * 60, "active");
 
             res.cookie("session_token", sessionToken, {
                 httpOnly: true,
@@ -157,7 +157,7 @@ const resendVerificationEmail = async (req, res, next) => {
 
         const verificationToken = crypto.randomBytes(32).toString("hex");
 
-        await redisClient.setex(`email_verification:${email}`, 10 * 60, verificationToken);
+        await memoryStore.setex(`email_verification:${email}`, 10 * 60, verificationToken);
 
         await sendVerificationEmail(email, user.name, verificationToken);
 
@@ -195,8 +195,8 @@ const login = async (req, res, next) => {
         const sessionToken = jwt.sign({ userId: user._id }, config.JWT_SECRET, { expiresIn: "30d" });
         const accessToken = jwt.sign({ userId: user._id }, config.JWT_SECRET, { expiresIn: "10m" });
 
-        // Store session in Redis (30 days)
-        await redisClient.setex(`session:${user._id}`, 30 * 24 * 60 * 60, "active");
+        // Store session in memory (30 days)
+        await memoryStore.setex(`session:${user._id}`, 30 * 24 * 60 * 60, "active");
 
         res.cookie("session_token", sessionToken, {
             httpOnly: true,
@@ -248,8 +248,8 @@ const forgotPassword = async (req, res, next) => {
         // Generate reset token
         const resetToken = crypto.randomBytes(32).toString("hex");
 
-        // Store token in Redis (expires in 1 hour)
-        await redisClient.setex(`password_reset:${email}`, 60 * 60, resetToken);
+        // Store token in memory (expires in 1 hour)
+        await memoryStore.setex(`password_reset:${email}`, 60 * 60, resetToken);
 
         // Send password reset email
         try {
@@ -280,8 +280,8 @@ const resetPassword = async (req, res, next) => {
             return next(new ApiError(400, "Password must be at least 6 characters long", "VALIDATION_ERROR"));
         }
 
-        // Get token from Redis
-        const storedToken = await redisClient.get(`password_reset:${email}`);
+        // Get token from memory store
+        const storedToken = await memoryStore.get(`password_reset:${email}`);
 
         if (!storedToken || storedToken !== token) {
             return next(new ApiError(400, "Invalid or expired reset token", "INVALID_TOKEN"));
@@ -301,8 +301,8 @@ const resetPassword = async (req, res, next) => {
         user.password = hashedPassword;
         await user.save();
 
-        // Delete token from Redis
-        await redisClient.del(`password_reset:${email}`);
+        // Delete token from memory store
+        await memoryStore.del(`password_reset:${email}`);
 
         res.status(200).json({
             success: true,
@@ -315,9 +315,9 @@ const resetPassword = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
     try {
-        // Delete session from Redis if user is authenticated
+        // Delete session from memory store if user is authenticated
 
-        await redisClient.del(`session:${req.user._id}`);
+        await memoryStore.del(`session:${req.user._id}`);
 
 
         res.clearCookie("session_token", {
@@ -325,7 +325,7 @@ const logout = async (req, res, next) => {
             secure: config.NODE_ENV === "production",
             sameSite: "Strict",
         });
-        await redisClient.del(`session:${req.userId}`);
+        await memoryStore.del(`session:${req.userId}`);
 
         res.status(200).json({
             success: true,
@@ -353,7 +353,7 @@ const refreshToken = async (req, res, next) => {
             return next(new ApiError(401, "Invalid session token", "UNAUTHORIZED", "Session token is invalid or expired"));
         }
 
-        const session = await redisClient.get(`session:${decoded.userId}`);
+        const session = await memoryStore.get(`session:${decoded.userId}`);
         // console.log(session)
         if (!session) {
             throw new ApiError(401, "Session expired. Please log in again.", "SESSION_EXPIRED", "No active session found for the user");

@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import ApiError from "./error-handler.js";
 import User from "../models/user.js";
-import redisClient from "../config/redis.js";
+import memoryStore from "../config/redis.js";
 
 export const authenticate = async (req, res, next) => {
     try {
@@ -27,9 +27,9 @@ export const authenticate = async (req, res, next) => {
         // Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET || "your-secret-key");
 
-        // If it's a session token, check if it's still valid in Redis
+        // If it's a session token, check if it's still valid in memory store
         if (isSessionToken) {
-            const sessionExists = await redisClient.get(`session:${decoded.userId}`);
+            const sessionExists = await memoryStore.get(`session:${decoded.userId}`);
             if (!sessionExists) {
                 return next(new ApiError(401, "Session expired or invalid", "SESSION_EXPIRED"));
             }
@@ -86,9 +86,9 @@ export const authenticateWithoutVerification = async (req, res, next) => {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET || "your-secret-key");
 
-        // If it's a session token, check if it's still valid in Redis
+        // If it's a session token, check if it's still valid in memory store
         if (isSessionToken) {
-            const sessionExists = await redisClient.get(`session:${decoded.userId}`);
+            const sessionExists = await memoryStore.get(`session:${decoded.userId}`);
             if (!sessionExists) {
                 return next(new ApiError(401, "Session expired or invalid", "SESSION_EXPIRED"));
             }
