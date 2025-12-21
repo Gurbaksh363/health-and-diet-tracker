@@ -6,7 +6,7 @@ const MealTypeSelector = ({ selectedMealType, onMealTypeChange }) => {
         { value: 'breakfast', icon: IconSunrise, label: 'Breakfast', color: 'from-orange-500 to-yellow-500' },
         { value: 'lunch', icon: IconSun, label: 'Lunch', color: 'from-blue-500 to-cyan-500' },
         { value: 'dinner', icon: IconMoon, label: 'Dinner', color: 'from-purple-500 to-pink-500' },
-        { value: 'snack', icon: IconCookie, label: 'Snack', color: 'from-green-500 to-teal-500' },
+
     ];
 
     return (

@@ -104,7 +104,6 @@ const NutritionTab = () => {
             breakfast: [],
             lunch: [],
             dinner: [],
-            snacks: []
         };
 
         todaysFoods.forEach(food => {
@@ -272,7 +271,6 @@ const NutritionTab = () => {
                         { value: 'breakfast', label: 'Breakfast', icon: Coffee, color: '#F59E0B', count: mealGroups.breakfast.length },
                         { value: 'lunch', label: 'Lunch', icon: Salad, color: '#10B981', count: mealGroups.lunch.length },
                         { value: 'dinner', label: 'Dinner', icon: UtensilsCrossed, color: '#8B5CF6', count: mealGroups.dinner.length },
-                        { value: 'snacks', label: 'Snacks', icon: Apple, color: '#EF4444', count: mealGroups.snacks.length }
                     ].map((meal) => {
                         const IconComponent = meal.icon;
                         return (

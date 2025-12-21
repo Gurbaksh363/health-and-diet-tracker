@@ -27,6 +27,13 @@ import { useAuth } from "./context/AuthContext";
 import { Navigate } from "react-router-dom";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import OnboardingRoute from "./routes/OnboardingRoute";
+import Features from "./pages/Features";
+import FAQ from "./pages/FAQ";
+import Contact from "./pages/Contact";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import About from "./pages/About";
+
 
 // Component to handle scroll reset on route change
 function ScrollToTop() {
@@ -101,6 +108,12 @@ function App() {
               <Route path="/settings" element={<><Navbar /><SettingsPage /></>} />
               <Route path="/reports" element={<><Navbar /><ReportsPage /></>} />
               <Route path="/goals" element={<><Navbar /><GoalsPage /></>} />
+              <Route path="/features" element={<Features />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/contact" element={<Contact />} />
             </Routes>
           </div>
         </Router>

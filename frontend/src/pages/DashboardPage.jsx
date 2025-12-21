@@ -57,10 +57,10 @@ export default function DashboardPage() {
   );
 
   return (
-    <div className="min-h-screen bg-background pt-16">
+    <div className="min-h-screen bg-background pt-1">
       {/* Header */}
-      <div className="bg-card border-b border-border sticky top-16 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="bg-card border-b border-border sticky top-1 z-10">
+        <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/')}
@@ -83,7 +83,7 @@ export default function DashboardPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
         {/* Daily Overview Card */}
-        <div className="bg-gradient-to-br from-primary/10 via-card to-accent/10 rounded-2xl p-6 shadow-lg border border-border animate-fade-in">
+        <div className="bg-linear-to-br from-primary/10 via-card to-accent/10 rounded-2xl p-6 shadow-lg border border-border animate-fade-in">
 
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">

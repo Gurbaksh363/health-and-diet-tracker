@@ -287,60 +287,7 @@ const AddWorkoutPage = () => {
                     </div>
 
                     {/* Steps and Distance Tracking */}
-                    <div className="grid grid-cols-2 gap-4">
-                        {/* Step Count */}
-                        <div>
-                            <label className="block text-sm font-semibold text-text mb-2">Steps (Optional)</label>
-                            <input
-                                type="number"
-                                min="0"
-                                value={workoutData.steps || ''}
-                                onChange={(e) => setWorkoutData({ ...workoutData, steps: parseInt(e.target.value) || 0 })}
-                                placeholder="0"
-                                className="w-full px-4 py-3 bg-bg border-2 border-border rounded-xl focus:border-accent focus:outline-none text-text"
-                            />
-                            <p className="text-xs text-text-secondary mt-1">Track your steps</p>
-                        </div>
 
-                        {/* Distance */}
-                        <div>
-                            <label className="block text-sm font-semibold text-text mb-2">
-                                Distance (km)
-                                {!manualDistance && workoutData.steps > 0 && (
-                                    <span className="text-xs text-accent ml-2">Auto-calculated</span>
-                                )}
-                            </label>
-                            <div className="relative">
-                                <input
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    value={workoutData.distance || ''}
-                                    onChange={(e) => {
-                                        setManualDistance(true);
-                                        setWorkoutData({ ...workoutData, distance: parseFloat(e.target.value) || 0 });
-                                    }}
-                                    placeholder="0.00"
-                                    className="w-full px-4 py-3 bg-bg border-2 border-border rounded-xl focus:border-accent focus:outline-none text-text"
-                                />
-                                {manualDistance && workoutData.steps > 0 && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setManualDistance(false)}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-accent hover:text-primary"
-                                        title="Reset to auto-calculate from steps"
-                                    >
-                                        Auto
-                                    </button>
-                                )}
-                            </div>
-                            <p className="text-xs text-text-secondary mt-1">
-                                {!manualDistance && workoutData.steps > 0 
-                                    ? `~${(workoutData.steps / 1312).toFixed(0)} steps per km`
-                                    : 'Enter distance manually'}
-                            </p>
-                        </div>
-                    </div>
 
                     {/* Auto-calculated Calories - Only show when activity name is entered */}
                     {workoutData.name.trim() && (

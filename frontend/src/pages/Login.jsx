@@ -174,7 +174,7 @@ const Login = () => {
             </button>
 
             {/* Divider */}
-            <div className="relative py-3">
+            {/* <div className="relative py-3">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200"></div>
               </div>
@@ -183,10 +183,10 @@ const Login = () => {
                   Or continue with
                 </span>
               </div>
-            </div>
+            </div> */}
 
             {/* Google Login Only */}
-            <button
+            {/* <button
               type="button"
               className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border-2 border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-md transition-all text-gray-700 font-medium hover:scale-[1.02] active:scale-[0.98]"
             >
@@ -209,7 +209,7 @@ const Login = () => {
                 />
               </svg>
               Continue with Google
-            </button>
+            </button> */}
           </form>
 
           {/* ---- RESEND SECTION ---- */}

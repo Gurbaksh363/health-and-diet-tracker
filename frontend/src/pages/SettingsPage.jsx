@@ -260,28 +260,7 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Danger Zone */}
-        <div className="bg-destructive/10 rounded-xl p-6 border border-destructive/20 animate-fade-in delay-400">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-destructive/10 to-destructive/5 flex items-center justify-center">
-              <AlertTriangle className="w-5 h-5 text-destructive" />
-            </div>
-            <h2 className="text-lg font-semibold text-destructive">Danger Zone</h2>
-          </div>
-          
-          <div className="space-y-3">
-            <p className="text-sm text-destructive/80">
-              Once you delete your account, there is no going back. All your data will be permanently removed.
-            </p>
-            <button
-              onClick={() => setShowDeleteModal(true)}
-              className="flex items-center justify-center gap-2 w-full py-3 bg-destructive text-white rounded-lg font-medium hover:bg-destructive/90 active:scale-95 transition-all"
-            >
-              <Trash2 className="w-5 h-5" />
-              Delete Account & All Data
-            </button>
-          </div>
-        </div>
+
 
       </div>
 

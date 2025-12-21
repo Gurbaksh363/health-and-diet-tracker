@@ -27,7 +27,7 @@ export default function ResetPasswordPage() {
       await authApi.resetPassword({ email, token, newPassword: password });
 
       toast.success("Password reset successfully!");
-    //   setTimeout(() => navigate("/login"), 2000);
+      setTimeout(() => navigate("/login"), 2000);
 
     } catch (err) {
       toast.error(err.response?.data?.message || "Reset failed");
