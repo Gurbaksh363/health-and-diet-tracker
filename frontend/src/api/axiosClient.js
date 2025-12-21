@@ -10,7 +10,7 @@ export const setAccessToken = (token) => {
 };
 
 const axiosClient = axios.create({
-  baseURL: "http://localhost:5050/v1",
+  baseURL: "/v1",
   withCredentials: true,
 });
 
